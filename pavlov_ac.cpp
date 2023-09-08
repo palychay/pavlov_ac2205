@@ -18,8 +18,21 @@ struct KC // компрессорная станция
     double effectivnost;
 };
 
+Pipe New_Pipe(){
+    Pipe p;
+    cin >> p.kilometr_name >> p.length >> p.diametr >> p.remont;
+    return p;
+}
 
+void Print_Pipe(Pipe p){
+    cout << p.kilometr_name << endl;
+    cout << p.length << endl;
+    cout << p.diametr << endl;
+    cout << p.remont << endl;
+}
 
 int main(){
+    Pipe p = New_Pipe();
+    Print_Pipe(p);
     return 0;
 }
