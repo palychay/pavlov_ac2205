@@ -1,4 +1,6 @@
 #include <iostream>
+#include <limits>
+#include <string>
 
 using namespace std;
 
@@ -17,6 +19,7 @@ struct KC // компрессорная станция
     int kolich_ceh_v_rabote;
     double effectivnost;
 };
+
 
 Pipe New_Pipe(){      //vvod new pipe
     Pipe p;
@@ -80,12 +83,19 @@ void Menu(){
         cout << " 6. Сохранить\n";
         cout << " 7. Загрузить\n";
         cout << " 0. Выход\n";
-        int n;
-        cout << "vvod number: ";
-        cin >> n;
 
+        int choice;
+        cout << "input number: ";
+        cin >> choice;
 
-        switch (n)
+        if (!(cin >> choice)) {
+            cout << "Invalid input!\n";
+            cin.clear(); // Очистить флаг ошибки ввода
+            cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Очистить буфер ввода
+            continue;
+            }
+        
+        switch (choice)
         {
         case 1:
             break;
@@ -102,12 +112,14 @@ void Menu(){
         case 7:
             break;
         case 0:
-            cout << "ffff";
+        cout << "Goodbye!";
             k = 0;
             break;
         default:
+            cout << "Вы ввели некорректное значение, пожалуйста, выберите цифру от 0 до 7\n";
             break;
         }
+        
     }
 }
 
