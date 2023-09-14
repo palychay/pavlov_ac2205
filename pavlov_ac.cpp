@@ -1,6 +1,5 @@
 #include <iostream>
 #include <limits>
-#include <string>
 
 using namespace std;
 
@@ -72,8 +71,7 @@ void Print_KC(KC kc){   //output new kc
 
 
 void Menu(){
-    bool k = 1;
-    while (k){
+    while (true){
         cout << "Menu\n";
         cout << " 1. Добавить трубу\n";
         cout << " 2. Добавить КС\n";
@@ -82,20 +80,50 @@ void Menu(){
         cout << " 5. Редактировать КС\n";
         cout << " 6. Сохранить\n";
         cout << " 7. Загрузить\n";
-        cout << " 0. Выход\n";
+        cout << " 8. Выход\n";
 
-        int choice;
+        double choice;
         cout << "input number: ";
         cin >> choice;
 
-        if (!(cin >> choice)) {
+        if (choice == 1){
+            continue;
+        }
+        else if (choice == 2){
+            continue;
+        }
+        else if (choice == 3){
+            continue;
+        }
+        else if (choice == 4){
+            continue;
+        }
+        else if (choice == 5){
+            continue;
+        }
+        else if (choice == 6){
+            continue;
+        }
+        else if (choice == 7){
+            continue;
+        }
+        else if (choice == 8){
+            cout << "Goodbye!";
+            break;
+        }
+        else{
+            cout << "Вы ввели некорректное значение, пожалуйста, выберите цифру от 1 до 8\n";
+            cin.clear(); // Очистить флаг ошибки ввода
+            cin.ignore(numeric_limits<streamsize>::max(), '\n'); 
+        }
+       /* if (!(cin >> choice)) {
             cout << "Invalid input!\n";
             cin.clear(); // Очистить флаг ошибки ввода
             cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Очистить буфер ввода
             continue;
-            }
+            }*/
         
-        switch (choice)
+       /* switch (choice)
         {
         case 1:
             break;
@@ -118,7 +146,7 @@ void Menu(){
         default:
             cout << "Вы ввели некорректное значение, пожалуйста, выберите цифру от 0 до 7\n";
             break;
-        }
+        }*/
         
     }
 }
