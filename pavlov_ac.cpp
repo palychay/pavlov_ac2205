@@ -1,7 +1,10 @@
 #include <iostream>
 #include <fstream>
+#include <string>
 
 using namespace std;
+
+
 
 struct Pipe  // труба
 {
@@ -94,6 +97,31 @@ void editpipe(Pipe &p){
                 break;
             }
             }
+}
+
+void savepipe(Pipe p){
+    ofstream save;
+    save.open("pipes.txt");
+    if (save.is_open()) //rewrite
+    {
+        save << p.kilometr_name << endl;
+        save << p.length << endl;
+        save << p.diametr << endl;
+        save << p.remont << endl;
+    }
+    save.close(); 
+    cout << "File has been written" << endl;
+}
+
+Pipe loading_pipe(){
+    Pipe p0;
+    ifstream in("pipes.txt");
+    if (in.is_open())
+    {   
+        in >> p0.kilometr_name >> p0.length >> p0.diametr >> p0.remont;
+    }
+    in.close();
+    return p0;
 }
 
 
@@ -257,10 +285,18 @@ void Menu(){
         }
 
         else if (choice == 6){
+            if (k1 == 0){
+                cout << "Empty\n";
+                cout << endl;
+            }
+            else{
+            savepipe(p);}
             continue;
         }
 
         else if (choice == 7){
+            p = loading_pipe();
+            k1++;
             continue;
         }
 
