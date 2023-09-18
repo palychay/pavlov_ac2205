@@ -70,9 +70,9 @@ void Print_Pipe(Pipe p){   //output new pipe
 
     cout << "Kilometr name: ";
     cout << p.kilometr_name << endl;
-    cout << "Length(metrs): ";
+    cout << "Length(kilometrs): ";
     cout << p.length << endl;
-    cout << "Diametr: ";
+    cout << "Diametr(mm): ";
     cout << p.diametr << endl;
     cout << "Remont(0 - no, 1 - yes): ";
     cout << p.remont << endl;
@@ -93,7 +93,6 @@ void editpipe(Pipe &p){
             else{
                 break;
             }
-            continue;
             }
 }
 
@@ -131,7 +130,7 @@ KC New_KC(){        //vvod new kc
     {
         cout << "working ceh: ";
         cin >> kc.kolich_ceh_v_rabote;
-        if ((!cin) || kc.kolich_ceh_v_rabote <= 0 || kc.kolich_ceh < kc.kolich_ceh_v_rabote){
+        if ((!cin) || kc.kolich_ceh_v_rabote < 0 || kc.kolich_ceh < kc.kolich_ceh_v_rabote){
         cout << "uncorrect input. need int number or kolich_ceh < kolich_ceh_v_rabote\n";
         cin.clear();
         cin.ignore(1000, '\n');
@@ -146,7 +145,7 @@ KC New_KC(){        //vvod new kc
     {
         cout << "Input effectivnost(from 0 to 1): ";
         cin >> kc.effectivnost;
-        if (cin.fail() || kc.effectivnost <= 0 || kc.effectivnost >= 1){
+        if (cin.fail() || kc.effectivnost < 0 || kc.effectivnost > 1){
         cout << "uncorrect input. need double number\n";
         cin.clear();
         cin.ignore(1000, '\n');
@@ -174,6 +173,23 @@ void Print_KC(KC kc){   //output new kc
     cout << kc.effectivnost << endl;
     cout << endl;
 }
+
+void editkc(KC &kc){
+    while (true)
+    {
+        cout << "Edit working ceh: ";
+        cin >> kc.kolich_ceh_v_rabote;
+        if ((cin.fail()) || kc.kolich_ceh_v_rabote < 0 || kc.kolich_ceh < kc.kolich_ceh_v_rabote){
+        cout << "uncorrect input. need int number or kolich_ceh < kolich_ceh_v_rabote\n";
+        cin.clear();
+        cin.ignore(1000, '\n');
+    }
+    else{
+        break;
+    }
+    }
+}
+
 
 
 void Menu(){
@@ -231,6 +247,12 @@ void Menu(){
         }
 
         else if (choice == 5){
+            if (k2 == 0){
+                cout << "Empty\n";
+                cout << endl;
+            }
+            else{
+            editkc(kc);}
             continue;
         }
 
