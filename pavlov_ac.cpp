@@ -5,7 +5,6 @@
 using namespace std;
 
 
-
 struct Pipe  // труба
 {
     string kilometr_name;
@@ -116,9 +115,14 @@ void savepipe(Pipe p){
 Pipe loading_pipe(){
     Pipe p0;
     ifstream in("pipes.txt");
-    if (in.is_open())
+    if (in.is_open() && !(in.peek() == EOF))
     {   
         in >> p0.kilometr_name >> p0.length >> p0.diametr >> p0.remont;
+    }
+    else{
+        p0 = {"0", 0.0, 0, 0};
+        cout << "pipe.txt is empty\n";
+        cout << endl;
     }
     in.close();
     return p0;
@@ -218,6 +222,35 @@ void editkc(KC &kc){
     }
 }
 
+void savekc(KC kc){
+    ofstream savee;
+    savee.open("kompressors_stat.txt");
+    if (savee.is_open()) //rewrite
+    {
+        savee << kc.name << endl;
+        savee << kc.kolich_ceh << endl;
+        savee << kc.kolich_ceh_v_rabote << endl;
+        savee << kc.effectivnost << endl;
+    }
+    savee.close(); 
+    cout << "File has been written" << endl;
+}
+
+KC loading_kc(){
+    KC kc0;
+    ifstream in("kompressors_stat.txt");
+    if (in.is_open() && !(in.peek() == EOF))
+    {   
+        in >> kc0.name >> kc0.kolich_ceh >> kc0.kolich_ceh_v_rabote >> kc0.effectivnost;
+    }
+    else{
+        kc0 = {"0", 0, 0, 0.0};
+        cout << "kompressors_stat.txt is empty\n";
+        cout << endl;
+    }
+    in.close();
+    return kc0;
+}
 
 
 void Menu(){
@@ -285,18 +318,22 @@ void Menu(){
         }
 
         else if (choice == 6){
-            if (k1 == 0){
+            if (k1 == 0 || k2 == 0){
                 cout << "Empty\n";
                 cout << endl;
             }
             else{
-            savepipe(p);}
+            savepipe(p);
+            savekc(kc);
+            }
             continue;
         }
 
         else if (choice == 7){
             p = loading_pipe();
+            kc = loading_kc();
             k1++;
+            k2++;
             continue;
         }
 
@@ -312,7 +349,6 @@ void Menu(){
         }
     }
 }
-
 
 
 
