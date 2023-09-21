@@ -22,12 +22,14 @@ Pipe New_Pipe(){      //vvod new pipe
     while (true){
     cout << "lengnth(km): ";
     cin >> p.length;
-    if (cin.fail() || p.length < 0){
+    
+    if (!(cin>>p.length) || p.length < 0){
         cout << "uncorrect input. need double number\n";
         cin.clear();
         cin.ignore(1000, '\n');
         continue;
     }
+    
     else{
         break;
     }
@@ -37,7 +39,7 @@ Pipe New_Pipe(){      //vvod new pipe
     {
         cout << "Input diametr(mm): ";
         cin >> p.diametr;
-        if (cin.fail() || p.diametr < 0){
+        if (!(cin >> p.diametr) || p.diametr < 0){
             cout << "uncorrect input. need int number\n";
             cin.clear();
             cin.ignore(1000, '\n');
@@ -52,7 +54,7 @@ Pipe New_Pipe(){      //vvod new pipe
     {
         cout << "Input remont(0 - no or 1 - yes): ";
         cin >> p.remont;
-        if (cin.fail()){
+        if (!(cin >> p.remont)){
             cout << "uncorrect input. need 0 or 1\n";
             cin.clear();
             cin.ignore(1000, '\n');
@@ -86,7 +88,7 @@ void editpipe(Pipe &p){
              {
             cout << "Edit remont pipe(0 - no or 1 - yes): ";
             cin >> p.remont;
-            if (cin.fail()){
+            if (!(cin >> p.remont)){
                 cout << "uncorrect input. need 0 or 1\n";
                 cin.clear();
                 cin.ignore(1000, '\n');
@@ -147,7 +149,7 @@ KC New_KC(){        //vvod new kc
     while (true){
     cout << "kolich cehov: ";
     cin >> kc.kolich_ceh;
-    if ((cin.fail()) || kc.kolich_ceh < 0){
+    if (!(cin >> kc.kolich_ceh) || kc.kolich_ceh < 0){
         cout << "uncorrect input. need int number\n";
         cin.clear();
         cin.ignore(1000, '\n');
@@ -162,7 +164,7 @@ KC New_KC(){        //vvod new kc
     {
         cout << "working ceh: ";
         cin >> kc.kolich_ceh_v_rabote;
-        if ((!cin) || kc.kolich_ceh_v_rabote < 0 || kc.kolich_ceh < kc.kolich_ceh_v_rabote){
+        if (!(cin >> kc.kolich_ceh_v_rabote) || kc.kolich_ceh_v_rabote < 0 || kc.kolich_ceh < kc.kolich_ceh_v_rabote){
         cout << "uncorrect input. need int number or kolich_ceh < kolich_ceh_v_rabote\n";
         cin.clear();
         cin.ignore(1000, '\n');
@@ -177,7 +179,7 @@ KC New_KC(){        //vvod new kc
     {
         cout << "Input effectivnost(from 0 to 1): ";
         cin >> kc.effectivnost;
-        if (cin.fail() || kc.effectivnost < 0 || kc.effectivnost > 1){
+        if (!(cin >> kc.effectivnost) || kc.effectivnost < 0 || kc.effectivnost > 1){
         cout << "uncorrect input. need double number\n";
         cin.clear();
         cin.ignore(1000, '\n');
@@ -211,7 +213,7 @@ void editkc(KC &kc){
     {
         cout << "Edit working ceh: ";
         cin >> kc.kolich_ceh_v_rabote;
-        if ((cin.fail()) || kc.kolich_ceh_v_rabote < 0 || kc.kolich_ceh < kc.kolich_ceh_v_rabote){
+        if (!(cin >> kc.kolich_ceh_v_rabote) || kc.kolich_ceh_v_rabote < 0 || kc.kolich_ceh < kc.kolich_ceh_v_rabote){
         cout << "uncorrect input. need int number or kolich_ceh < kolich_ceh_v_rabote\n";
         cin.clear();
         cin.ignore(1000, '\n');
