@@ -1,9 +1,30 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <sstream>
 
 using namespace std;
 
+bool isDouble(const string &input) {
+    istringstream iss(input);
+    double testValue;
+    iss >> noskipws >> testValue;
+    return iss.eof() && !iss.fail() && testValue > 0;
+}
+
+bool isInteger(const string &input) {
+    istringstream iss(input);
+    int testValue;
+    iss >> testValue;
+    return iss.eof() && !iss.fail() && testValue > 0;
+}
+
+bool isBool(const string &input) {
+    istringstream iss(input);
+    bool testValue;
+    iss >> testValue;
+    return iss.eof() && !iss.fail();
+}
 
 struct Pipe  // труба
 {
@@ -13,55 +34,56 @@ struct Pipe  // труба
     bool remont;
 };
 
-Pipe New_Pipe(){      //vvod new pipe
-    Pipe p;
+Pipe New_Pipe(Pipe &p){      //vvod new pipe
+    
     cout << "New pipe\n";
     cout << "Input kilometr_name: ";
-    cin >> p.kilometr_name;
+    cin.ignore(1000, '\n');
+    getline(cin, p.kilometr_name);
 
     while (true){
+    string input;
     cout << "lengnth(km): ";
-    cin >> p.length;
-    
-    if (!(cin>>p.length) || p.length < 0){
-        cout << "uncorrect input. need double number\n";
-        cin.clear();
-        cin.ignore(1000, '\n');
-        continue;
+    cin >> input;
+    if (isDouble(input)){
+         istringstream iss(input);
+         iss >> noskipws >> p.length;
+         break;
     }
-    
     else{
-        break;
+        cout << "uncorrect input. programm need double\n";
+        continue;
     }
     }
 
     while (true)
     {
         cout << "Input diametr(mm): ";
-        cin >> p.diametr;
-        if (!(cin >> p.diametr) || p.diametr < 0){
-            cout << "uncorrect input. need int number\n";
-            cin.clear();
-            cin.ignore(1000, '\n');
-            continue;
+        string input;
+        cin >> input;
+        if (isInteger(input)){
+            istringstream iss(input);
+            iss >> p.diametr;
+            break;
         }
         else{
-            break;
+            cout << "uncorrect input. need int number\n";
+            continue;
         }
     }
 
     while (true)
-    {
+    {   string input;
         cout << "Input remont(0 - no or 1 - yes): ";
-        cin >> p.remont;
-        if (!(cin >> p.remont)){
-            cout << "uncorrect input. need 0 or 1\n";
-            cin.clear();
-            cin.ignore(1000, '\n');
-            continue;
+        cin >> input;
+        if (isBool(input)){
+            istringstream iss(input);
+            iss >> p.remont;
+            break;
         }
     else{
-        break;
+        cout << "uncorrect input. need 0 or 1\n";
+        continue;
     }
     }
 
@@ -71,7 +93,6 @@ Pipe New_Pipe(){      //vvod new pipe
 
 void Print_Pipe(Pipe p){   //output new pipe
     cout << "Your pipe:\n";
-
     cout << "Kilometr name: ";
     cout << p.kilometr_name << endl;
     cout << "Length(kilometrs): ";
@@ -103,7 +124,7 @@ void editpipe(Pipe &p){
 void savepipe(Pipe p){
     ofstream save;
     save.open("pipes.txt");
-    if (save.is_open()) //rewrite
+    if (save.is_open() && p.length != 0 && p.diametr != 0) //rewrite
     {
         save << p.kilometr_name << endl;
         save << p.length << endl;
@@ -144,52 +165,53 @@ KC New_KC(){        //vvod new kc
     KC kc;
     cout << "New kc\n";
     cout << "Input name: ";
-    cin >> kc.name;
+    cin.ignore(1000, '\n');
+    getline(cin, kc.name);
 
     while (true){
+    string input;
     cout << "kolich cehov: ";
-    cin >> kc.kolich_ceh;
-    if (!(cin >> kc.kolich_ceh) || kc.kolich_ceh < 0){
-        cout << "uncorrect input. need int number\n";
-        cin.clear();
-        cin.ignore(1000, '\n');
-        continue;
+    cin >> input;
+    if (isInteger(input)){
+        istringstream iss(input);
+        iss >> kc.kolich_ceh;
+        break;
     }
     else{
-        break;
+        cout << "uncorrect input. need int number\n";
+        continue;
     }
     }
 
     while (true)
-    {
+    {   string input;
         cout << "working ceh: ";
-        cin >> kc.kolich_ceh_v_rabote;
-        if (!(cin >> kc.kolich_ceh_v_rabote) || kc.kolich_ceh_v_rabote < 0 || kc.kolich_ceh < kc.kolich_ceh_v_rabote){
-        cout << "uncorrect input. need int number or kolich_ceh < kolich_ceh_v_rabote\n";
-        cin.clear();
-        cin.ignore(1000, '\n');
-        continue;
+        cin >> input;
+        if (isInteger(input)){
+            istringstream iss(input);
+            iss >> kc.kolich_ceh_v_rabote;
+            break;
     }
-    else{
-        break;
-    }
+        else{
+            cout << "uncorrect input. need int number or kolich_ceh < kolich_ceh_v_rabote\n";
+            continue;
+        }
     }
     
     while (true)
-    {
+    {   string input;
         cout << "Input effectivnost(from 0 to 1): ";
-        cin >> kc.effectivnost;
-        if (!(cin >> kc.effectivnost) || kc.effectivnost < 0 || kc.effectivnost > 1){
-        cout << "uncorrect input. need double number\n";
-        cin.clear();
-        cin.ignore(1000, '\n');
-        continue;
+        cin >> input;
+        if (isDouble(input)){
+            istringstream iss(input);
+            iss >> kc.effectivnost;
+            break;
     }
     else{
-        break;
+        cout << "uncorrect input. need double number\n";
+        continue;
     }
     }
-    
     
     cout << endl;
     return kc;
@@ -227,7 +249,7 @@ void editkc(KC &kc){
 void savekc(KC kc){
     ofstream savee;
     savee.open("kompressors_stat.txt");
-    if (savee.is_open()) //rewrite
+    if (savee.is_open() && kc.kolich_ceh != 0) //rewrite
     {
         savee << kc.name << endl;
         savee << kc.kolich_ceh << endl;
@@ -277,7 +299,7 @@ void Menu(){
         cout << endl;
 
         if (choice == 1){
-            p = New_Pipe();
+            New_Pipe(p);
             k1++;
             continue;
         }
