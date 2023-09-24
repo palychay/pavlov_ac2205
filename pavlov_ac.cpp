@@ -44,7 +44,7 @@ Pipe New_Pipe(Pipe &p){      //vvod new pipe
     while (true){
     string input;
     cout << "lengnth(km): ";
-    cin >> input;
+    getline(cin, input);
     if (isDouble(input)){
          istringstream iss(input);
          iss >> noskipws >> p.length;
@@ -60,7 +60,7 @@ Pipe New_Pipe(Pipe &p){      //vvod new pipe
     {
         cout << "Input diametr(mm): ";
         string input;
-        cin >> input;
+        getline(cin, input);
         if (isInteger(input)){
             istringstream iss(input);
             iss >> p.diametr;
@@ -75,7 +75,7 @@ Pipe New_Pipe(Pipe &p){      //vvod new pipe
     while (true)
     {   string input;
         cout << "Input remont(0 - no or 1 - yes): ";
-        cin >> input;
+        getline(cin, input);
         if (isBool(input)){
             istringstream iss(input);
             iss >> p.remont;
@@ -106,19 +106,22 @@ void Print_Pipe(Pipe p){   //output new pipe
 
 void editpipe(Pipe &p){
     while (true)
-             {
-            cout << "Edit remont pipe(0 - no or 1 - yes): ";
-            cin >> p.remont;
-            if (!(cin >> p.remont)){
-                cout << "uncorrect input. need 0 or 1\n";
-                cin.clear();
-                cin.ignore(1000, '\n');
-                continue;
-                }
-            else{
-                break;
-            }
-            }
+        {
+        string input;
+        cout << "Input remont(0 - no or 1 - yes): ";
+        cin.ignore(1000, '\n');
+        getline(cin, input);
+        if (isBool(input)){
+            istringstream iss(input);
+            iss >> p.remont;
+            break;
+        }
+    else{
+        cout << "uncorrect input. need 0 or 1\n";
+        continue;
+    }
+            
+        }
 }
 
 void savepipe(Pipe p){
@@ -135,20 +138,18 @@ void savepipe(Pipe p){
     cout << "File has been written" << endl;
 }
 
-Pipe loading_pipe(){
-    Pipe p0;
+Pipe loading_pipe(Pipe &p){
     ifstream in("pipes.txt");
     if (in.is_open() && !(in.peek() == EOF))
     {   
-        in >> p0.kilometr_name >> p0.length >> p0.diametr >> p0.remont;
+        in >> p.kilometr_name >> p.length >> p.diametr >> p.remont;
     }
     else{
-        p0 = {"0", 0.0, 0, 0};
         cout << "pipe.txt is empty\n";
         cout << endl;
     }
     in.close();
-    return p0;
+    return p;
 }
 
 
@@ -171,7 +172,7 @@ KC New_KC(){        //vvod new kc
     while (true){
     string input;
     cout << "kolich cehov: ";
-    cin >> input;
+    getline(cin, input);
     if (isInteger(input)){
         istringstream iss(input);
         iss >> kc.kolich_ceh;
@@ -186,12 +187,18 @@ KC New_KC(){        //vvod new kc
     while (true)
     {   string input;
         cout << "working ceh: ";
-        cin >> input;
+        getline(cin, input);
         if (isInteger(input)){
             istringstream iss(input);
             iss >> kc.kolich_ceh_v_rabote;
-            break;
-    }
+            if (kc.kolich_ceh < kc.kolich_ceh_v_rabote){
+                cout << "uncorrect input. need int number or kolich_ceh < kolich_ceh_v_rabote\n";
+                continue;
+            }
+            else{
+                break;
+            }
+        }
         else{
             cout << "uncorrect input. need int number or kolich_ceh < kolich_ceh_v_rabote\n";
             continue;
@@ -201,16 +208,22 @@ KC New_KC(){        //vvod new kc
     while (true)
     {   string input;
         cout << "Input effectivnost(from 0 to 1): ";
-        cin >> input;
+        getline(cin, input);
         if (isDouble(input)){
             istringstream iss(input);
             iss >> kc.effectivnost;
-            break;
-    }
-    else{
-        cout << "uncorrect input. need double number\n";
-        continue;
-    }
+            if (kc.effectivnost > 1){
+                cout << "uncorrect input. need double number\n";
+                continue;
+            }
+            else{
+                break;
+            }
+        }
+        else{
+            cout << "uncorrect input. need double number\n";
+            continue;
+        }
     }
     
     cout << endl;
@@ -233,16 +246,25 @@ void Print_KC(KC kc){   //output new kc
 void editkc(KC &kc){
     while (true)
     {
-        cout << "Edit working ceh: ";
-        cin >> kc.kolich_ceh_v_rabote;
-        if (!(cin >> kc.kolich_ceh_v_rabote) || kc.kolich_ceh_v_rabote < 0 || kc.kolich_ceh < kc.kolich_ceh_v_rabote){
-        cout << "uncorrect input. need int number or kolich_ceh < kolich_ceh_v_rabote\n";
-        cin.clear();
+        string input;
+        cout << "working ceh: ";
         cin.ignore(1000, '\n');
-    }
-    else{
-        break;
-    }
+        getline(cin, input);
+        if (isInteger(input)){
+            istringstream iss(input);
+            iss >> kc.kolich_ceh_v_rabote;
+            if (kc.kolich_ceh < kc.kolich_ceh_v_rabote){
+                cout << "uncorrect input. need int number or kolich_ceh < kolich_ceh_v_rabote\n";
+                continue;
+            }
+            else{
+                break;
+            }
+        }
+        else{
+            cout << "uncorrect input. need int number or kolich_ceh < kolich_ceh_v_rabote\n";
+            continue;
+        }
     }
 }
 
@@ -256,24 +278,22 @@ void savekc(KC kc){
         savee << kc.kolich_ceh_v_rabote << endl;
         savee << kc.effectivnost << endl;
     }
-    savee.close(); 
-    cout << "File has been written" << endl;
+    savee.close();
 }
 
-KC loading_kc(){
-    KC kc0;
+KC loading_kc(KC &kc){
+    
     ifstream in("kompressors_stat.txt");
     if (in.is_open() && !(in.peek() == EOF))
     {   
-        in >> kc0.name >> kc0.kolich_ceh >> kc0.kolich_ceh_v_rabote >> kc0.effectivnost;
+        in >> kc.name >> kc.kolich_ceh >> kc.kolich_ceh_v_rabote >> kc.effectivnost;
     }
     else{
-        kc0 = {"0", 0, 0, 0.0};
         cout << "kompressors_stat.txt is empty\n";
         cout << endl;
     }
     in.close();
-    return kc0;
+    return kc;
 }
 
 
@@ -354,11 +374,21 @@ void Menu(){
         }
 
         else if (choice == 7){
-            p = loading_pipe();
-            kc = loading_kc();
-            k1++;
-            k2++;
-            continue;
+            ifstream in("pipes.txt");
+            ifstream inn("kompressors_stat.txt");
+            if ((in.is_open() && !(in.peek() == EOF)) && (inn.is_open() && !(inn.peek() == EOF))){
+                loading_pipe(p);
+                k1++;
+                loading_kc(kc);
+                k2++;
+            }
+            else{
+                cout << "empty\n";
+                cout << endl;
+            }
+            in.close();
+            inn.close();
+            
         }
 
         else if (choice == 8){
