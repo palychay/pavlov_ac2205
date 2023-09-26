@@ -2,6 +2,7 @@
 #include <fstream>
 #include <string>
 #include <sstream>
+#include <vector>
 
 using namespace std;
 
@@ -109,8 +110,7 @@ void editpipe(Pipe &p){
         {
         string input;
         cout << "Input remont(0 - no or 1 - yes): ";
-        cin.ignore(1000, '\n');
-        getline(cin, input);
+        cin >> input;
         if (isBool(input)){
             istringstream iss(input);
             iss >> p.remont;
@@ -122,34 +122,6 @@ void editpipe(Pipe &p){
     }
             
         }
-}
-
-void savepipe(Pipe p){
-    ofstream save;
-    save.open("pipes.txt");
-    if (save.is_open() && p.length != 0 && p.diametr != 0) //rewrite
-    {
-        save << p.kilometr_name << endl;
-        save << p.length << endl;
-        save << p.diametr << endl;
-        save << p.remont << endl;
-    }
-    save.close(); 
-    cout << "File has been written" << endl;
-}
-
-Pipe loading_pipe(Pipe &p){
-    ifstream in("pipes.txt");
-    if (in.is_open() && !(in.peek() == EOF))
-    {   
-        in >> p.kilometr_name >> p.length >> p.diametr >> p.remont;
-    }
-    else{
-        cout << "pipe.txt is empty\n";
-        cout << endl;
-    }
-    in.close();
-    return p;
 }
 
 
@@ -248,8 +220,7 @@ void editkc(KC &kc){
     {
         string input;
         cout << "working ceh: ";
-        cin.ignore(1000, '\n');
-        getline(cin, input);
+        cin >> input;
         if (isInteger(input)){
             istringstream iss(input);
             iss >> kc.kolich_ceh_v_rabote;
@@ -268,33 +239,71 @@ void editkc(KC &kc){
     }
 }
 
-void savekc(KC kc){
+
+
+void save_data(Pipe p, KC kc){
     ofstream savee;
-    savee.open("kompressors_stat.txt");
-    if (savee.is_open() && kc.kolich_ceh != 0) //rewrite
-    {
+    savee.open("data.txt");
+    if (savee.is_open()) //rewrite
+    {   
+        savee << p.kilometr_name << endl;
+        savee << p.length << endl;
+        savee << p.diametr << endl;
+        savee << p.remont << endl;
         savee << kc.name << endl;
         savee << kc.kolich_ceh << endl;
         savee << kc.kolich_ceh_v_rabote << endl;
         savee << kc.effectivnost << endl;
     }
     savee.close();
+    cout << "ok save" << endl;
 }
 
-KC loading_kc(KC &kc){
-    
-    ifstream in("kompressors_stat.txt");
-    if (in.is_open() && !(in.peek() == EOF))
-    {   
-        in >> kc.name >> kc.kolich_ceh >> kc.kolich_ceh_v_rabote >> kc.effectivnost;
+
+vector <string> write_load_data_in_massiv(){
+    vector <string> star;
+    string s;
+    ifstream in("data.txt");
+    if (in.is_open() && !(in.eof())){
+        int i = 0;
+        while (i < 8)
+        {   getline(in, s);
+            star.push_back(s);
+            i++;
+        }
     }
-    else{
-        cout << "kompressors_stat.txt is empty\n";
-        cout << endl;
-    }
-    in.close();
-    return kc;
+    return star;
 }
+
+void loading_pipe(Pipe &p, KC &kc){
+    vector <string> ps = write_load_data_in_massiv();
+    p.kilometr_name = ps[0];
+    istringstream pl(ps[1]);
+    istringstream pd(ps[2]);
+    istringstream pr(ps[3]);
+    pl >> p.length;
+    pd >> p.diametr;
+    pr >> p.remont;
+    kc.name = ps[4];
+    istringstream kcceh(ps[5]);
+    istringstream kcw(ps[6]);
+    istringstream kcef(ps[7]);
+    kcceh >> kc.kolich_ceh;
+    kcw >> kc.kolich_ceh_v_rabote;
+    kcef >> kc.effectivnost;
+    cout << "loading finished" << endl;
+}
+/*KC loading_kc(KC kc){
+    vector <string> kcs = write_load_data_in_massiv();
+    kc.name = kcs[4];
+    istringstream kcceh(kcs[5]);
+    istringstream kcw(kcs[6]);
+    istringstream kcef(kcs[7]);
+    kcceh >> kc.kolich_ceh;
+    kcw >> kc.kolich_ceh_v_rabote;
+    kcef >> kc.effectivnost;
+    return kc;
+}*/
 
 
 void Menu(){
@@ -367,28 +376,24 @@ void Menu(){
                 cout << endl;
             }
             else{
-            savepipe(p);
-            savekc(kc);
+            save_data(p, kc);
             }
             continue;
         }
 
         else if (choice == 7){
-            ifstream in("pipes.txt");
-            ifstream inn("kompressors_stat.txt");
-            if ((in.is_open() && !(in.peek() == EOF)) && (inn.is_open() && !(inn.peek() == EOF))){
-                loading_pipe(p);
+            ifstream in("data.txt");
+            if (in.is_open() && !(in.peek() == EOF)){
+                loading_pipe(p, kc);
                 k1++;
-                loading_kc(kc);
+                //loading_kc(kc);
                 k2++;
             }
             else{
                 cout << "empty\n";
                 cout << endl;
             }
-            in.close();
-            inn.close();
-            
+            in.close();  
         }
 
         else if (choice == 8){
