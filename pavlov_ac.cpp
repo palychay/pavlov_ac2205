@@ -6,26 +6,18 @@
 
 using namespace std;
 
-bool isDouble(const string &input) {
-    istringstream iss(input);
-    double testValue;
-    iss >> noskipws >> testValue;
-    return iss.eof() && !iss.fail() && testValue > 0;
+template <typename T> 
+T get_correct(T max, T min){
+    T x;
+	while ((cin >> x).fail() || cin.peek() != '\n' || x < min || x > max)	// is buffer empty (int/float check)
+	{
+		cin.clear();
+		cin.ignore(10000, '\n');
+		cout << "Неправильный ввод. Пожалуйста, введите еще раз:  ";
+	}
+    return x;
 }
 
-bool isInteger(const string &input) {
-    istringstream iss(input);
-    int testValue;
-    iss >> testValue;
-    return iss.eof() && !iss.fail() && testValue > 0;
-}
-
-bool isBool(const string &input) {
-    istringstream iss(input);
-    bool testValue;
-    iss >> testValue;
-    return iss.eof() && !iss.fail();
-}
 
 struct Pipe  // труба
 {
@@ -35,76 +27,35 @@ struct Pipe  // труба
     bool remont;
 };
 
-Pipe New_Pipe(Pipe &p){      //vvod new pipe
-    
-    cout << "New pipe\n";
-    cout << "Input kilometr_name: ";
+Pipe New_Pipe(){      //vvod new pipe
+    Pipe p;
+    cout << "Новая труба\n";
+    cout << "Километровая отметка: ";
     cin.ignore(1000, '\n');
     getline(cin, p.kilometr_name);
-
-    while (true){
-    string input;
-    cout << "lengnth(km): ";
-    getline(cin, input);
-    if (isDouble(input)){
-         istringstream iss(input);
-         iss >> noskipws >> p.length;
-         break;
-    }
-    else{
-        cout << "uncorrect input. programm need double\n";
-        continue;
-    }
-    }
-
-    while (true)
-    {
-        cout << "Input diametr(mm): ";
-        string input;
-        getline(cin, input);
-        if (isInteger(input)){
-            istringstream iss(input);
-            iss >> p.diametr;
-            break;
-        }
-        else{
-            cout << "uncorrect input. need int number\n";
-            continue;
-        }
-    }
-
-    while (true)
-    {   string input;
-        cout << "Input remont(0 - no or 1 - yes): ";
-        getline(cin, input);
-        if (isBool(input)){
-            istringstream iss(input);
-            iss >> p.remont;
-            break;
-        }
-    else{
-        cout << "uncorrect input. need 0 or 1\n";
-        continue;
-    }
-    }
-
+    cout << "Длина(км): ";
+    p.length = get_correct(1500., 0.);
+    cout << "Диаметр трубы(мм): ";
+    p.diametr = get_correct(1500, 0);
+    cout << "Признак в ремонте(0 - нет or 1 - да): ";
+    p.remont = get_correct(true, false);
     cout << endl;
     return p;
 }
 
-void Print_Pipe(Pipe p){   //output new pipe
-    cout << "Your pipe:\n";
-    cout << "Kilometr name: ";
+void Print_Pipe(const Pipe &p){   //output new pipe
+    cout << "Ваша труба:\n";
+    cout << "Километровая отметка: ";
     cout << p.kilometr_name << endl;
-    cout << "Length(kilometrs): ";
+    cout << "Длина(в километрах): ";
     cout << p.length << endl;
-    cout << "Diametr(mm): ";
+    cout << "Диаметр трубы(в миллиметрах): ";
     cout << p.diametr << endl;
-    cout << "Remont(0 - no, 1 - yes): ";
+    cout << "Признак в ремонте(0 - нет, 1 - да): ";
     cout << p.remont << endl;
     cout << endl;
 }
-
+/*
 void editpipe(Pipe &p){
     while (true)
         {
@@ -123,9 +74,9 @@ void editpipe(Pipe &p){
             
         }
 }
+*/
 
-
-
+/*
 struct KC // компрессорная станция
 {
     string name;
@@ -293,26 +244,16 @@ void loading_pipe(Pipe &p, KC &kc){
     kcef >> kc.effectivnost;
     cout << "loading finished" << endl;
 }
-/*KC loading_kc(KC kc){
-    vector <string> kcs = write_load_data_in_massiv();
-    kc.name = kcs[4];
-    istringstream kcceh(kcs[5]);
-    istringstream kcw(kcs[6]);
-    istringstream kcef(kcs[7]);
-    kcceh >> kc.kolich_ceh;
-    kcw >> kc.kolich_ceh_v_rabote;
-    kcef >> kc.effectivnost;
-    return kc;
-}*/
 
+*/
 
-void Menu(){
+int Menu(){
     Pipe p;
-    KC kc;
-    int k1 = 0;
-    int k2 = 0;
+    //KC kc;
+   // int k1 = 0;
+    //int k2 = 0;
     while (true){
-        cout << "Menu\n";
+        cout << "Меню\n";
         cout << " 1. Добавить трубу\n";
         cout << " 2. Добавить КС\n";
         cout << " 3. Просмотр всех объектов\n";
@@ -322,89 +263,39 @@ void Menu(){
         cout << " 7. Загрузить\n";
         cout << " 8. Выход\n";
         cout << endl;
-        double choice;
-        cout << "input number: ";
-        cin >> choice;
+        int choice;//!!!
+        cout << "Пожалуйста, выберите число от 1 до 8: ";
+        choice = get_correct(8, 1);
         cout << endl;
-
-        if (choice == 1){
-            New_Pipe(p);
-            k1++;
-            continue;
-        }
-
-        else if (choice == 2){
-            kc = New_KC();
-            k2++;
-            continue;
-        }
-
-        else if (choice == 3){
-            if (k1 == 0 || k2 == 0){
-                cout << "Empty or not pipe or kc(\n";
-            }
-            else{
-                Print_Pipe(p);
-                Print_KC(kc);
-            }
-            continue;
-        }
-
-        else if (choice == 4){
-            if (k1 == 0){
-                cout << "Empty\n";
-                cout << endl;
-            }
-            else{
-            editpipe(p);}
-            continue;
-        }
-
-        else if (choice == 5){
-            if (k2 == 0){
-                cout << "Empty\n";
-                cout << endl;
-            }
-            else{
-            editkc(kc);}
-            continue;
-        }
-
-        else if (choice == 6){
-            if (k1 == 0 || k2 == 0){
-                cout << "Empty\n";
-                cout << endl;
-            }
-            else{
-            save_data(p, kc);
-            }
-            continue;
-        }
-
-        else if (choice == 7){
-            ifstream in("data.txt");
-            if (in.is_open() && !(in.peek() == EOF)){
-                loading_pipe(p, kc);
-                k1++;
-                //loading_kc(kc);
-                k2++;
-            }
-            else{
-                cout << "empty\n";
-                cout << endl;
-            }
-            in.close();  
-        }
-
-        else if (choice == 8){
-            cout << "Goodbye!";
+        switch (choice)
+        {
+        case 1:
+            p = New_Pipe();
             break;
-        }
-
-        else{
-            cout << "Вы ввели некорректное значение, пожалуйста, выберите цифру от 1 до 8\n";
-            cin.clear(); // Очистить флаг ошибки ввода
-            cin.ignore(1000, '\n'); 
+        case 2:
+            
+            break;
+        case 3:
+            Print_Pipe(p);
+            break;
+        case 4:
+            
+            break;
+        case 5:
+            
+            break;
+        case 6:
+            
+            break;
+        case 7:
+            
+            break;
+        case 8:
+            return 0;
+            break;
+        default:
+            cout << "Ошибка ввода. Пожалуйста, выберите число от 1 до 8.";
+            break;
         }
     }
 }
