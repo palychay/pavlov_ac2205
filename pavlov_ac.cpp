@@ -55,28 +55,15 @@ void Print_Pipe(const Pipe &p){   //output new pipe
     cout << p.remont << endl;
     cout << endl;
 }
-/*
-void editpipe(Pipe &p){
-    while (true)
-        {
-        string input;
-        cout << "Input remont(0 - no or 1 - yes): ";
-        cin >> input;
-        if (isBool(input)){
-            istringstream iss(input);
-            iss >> p.remont;
-            break;
-        }
-    else{
-        cout << "uncorrect input. need 0 or 1\n";
-        continue;
-    }
-            
-        }
-}
-*/
 
-/*
+void editpipe(Pipe &p){
+    cout << "Признак в ремонте(0 - нет or 1 - да): ";
+    p.remont = get_correct(true, false);
+    cout << endl;
+}
+
+
+
 struct KC // компрессорная станция
 {
     string name;
@@ -87,75 +74,23 @@ struct KC // компрессорная станция
 
 KC New_KC(){        //vvod new kc
     KC kc;
-    cout << "New kc\n";
-    cout << "Input name: ";
+    cout << "Новая КС\n";
+    cout << "Название: ";
     cin.ignore(1000, '\n');
     getline(cin, kc.name);
-
-    while (true){
-    string input;
-    cout << "kolich cehov: ";
-    getline(cin, input);
-    if (isInteger(input)){
-        istringstream iss(input);
-        iss >> kc.kolich_ceh;
-        break;
-    }
-    else{
-        cout << "uncorrect input. need int number\n";
-        continue;
-    }
-    }
-
-    while (true)
-    {   string input;
-        cout << "working ceh: ";
-        getline(cin, input);
-        if (isInteger(input)){
-            istringstream iss(input);
-            iss >> kc.kolich_ceh_v_rabote;
-            if (kc.kolich_ceh < kc.kolich_ceh_v_rabote){
-                cout << "uncorrect input. need int number or kolich_ceh < kolich_ceh_v_rabote\n";
-                continue;
-            }
-            else{
-                break;
-            }
-        }
-        else{
-            cout << "uncorrect input. need int number or kolich_ceh < kolich_ceh_v_rabote\n";
-            continue;
-        }
-    }
-    
-    while (true)
-    {   string input;
-        cout << "Input effectivnost(from 0 to 1): ";
-        getline(cin, input);
-        if (isDouble(input)){
-            istringstream iss(input);
-            iss >> kc.effectivnost;
-            if (kc.effectivnost > 1){
-                cout << "uncorrect input. need double number\n";
-                continue;
-            }
-            else{
-                break;
-            }
-        }
-        else{
-            cout << "uncorrect input. need double number\n";
-            continue;
-        }
-    }
-    
+    cout << "Количество цехов: ";
+    kc.kolich_ceh = get_correct(1500, 0);
+    cout << "Количество работающих цехов.(Может возникнуть ошибка, если их будет больше всего кол-ва цехов.): ";
+    kc.kolich_ceh_v_rabote = get_correct(kc.kolich_ceh, 0);
+    cout << "Ввод эффективности(от 0 до 1, включая все числа между ними): ";
+    kc.effectivnost = get_correct(1., 0.);
     cout << endl;
     return kc;
 }
 
 void Print_KC(KC kc){   //output new kc
-    cout << "Your KC\n";
-    cout << "KC name: ";
+    cout << "Ваша KC\n";
+    cout << "Название КС: ";
     cout << kc.name << endl;
     cout << "Количество цехов: ";
     cout << kc.kolich_ceh << endl;
@@ -167,27 +102,9 @@ void Print_KC(KC kc){   //output new kc
 }
 
 void editkc(KC &kc){
-    while (true)
-    {
-        string input;
-        cout << "working ceh: ";
-        cin >> input;
-        if (isInteger(input)){
-            istringstream iss(input);
-            iss >> kc.kolich_ceh_v_rabote;
-            if (kc.kolich_ceh < kc.kolich_ceh_v_rabote){
-                cout << "uncorrect input. need int number or kolich_ceh < kolich_ceh_v_rabote\n";
-                continue;
-            }
-            else{
-                break;
-            }
-        }
-        else{
-            cout << "uncorrect input. need int number or kolich_ceh < kolich_ceh_v_rabote\n";
-            continue;
-        }
-    }
+    cout << "Количество работающих цехов.(Может возникнуть ошибка, если их будет больше всего кол-ва цехов.): ";
+    kc.kolich_ceh_v_rabote = get_correct(kc.kolich_ceh, 0);
+    cout << endl;
 }
 
 
@@ -207,10 +124,10 @@ void save_data(Pipe p, KC kc){
         savee << kc.effectivnost << endl;
     }
     savee.close();
-    cout << "ok save" << endl;
+    cout << "Сохранение прошло успешно." << endl;
 }
 
-
+/*
 vector <string> write_load_data_in_massiv(){
     vector <string> star;
     string s;
@@ -249,14 +166,16 @@ void loading_pipe(Pipe &p, KC &kc){
 
 int Menu(){
     Pipe p;
-    //KC kc;
+    p.diametr = -1;
+    KC kc;
+    kc.kolich_ceh = -1;
    // int k1 = 0;
     //int k2 = 0;
     while (true){
         cout << "Меню\n";
         cout << " 1. Добавить трубу\n";
         cout << " 2. Добавить КС\n";
-        cout << " 3. Просмотр всех объектов\n";
+        cout << " 3. Просмотр доступных объектов\n";
         cout << " 4. Редактировать трубу\n";
         cout << " 5. Редактировать КС\n";
         cout << " 6. Сохранить\n";
@@ -272,18 +191,47 @@ int Menu(){
         case 1:
             p = New_Pipe();
             break;
+
         case 2:
-            
+            kc = New_KC();
             break;
+
         case 3:
-            Print_Pipe(p);
+            if (p.diametr != -1 && kc.kolich_ceh == -1){
+                Print_Pipe(p);
+                cout << "КС - НЕТ!\n" << endl;
+            }
+            else if (p.diametr == -1 && kc.kolich_ceh != -1){
+                Print_KC(kc);
+                cout << "Трубы - НЕТ!\n" << endl;
+            }
+            else if (p.diametr == -1 && kc.kolich_ceh == -1){
+                cout << "Объектов нет!\n" << endl;
+            }
+            else{
+                Print_KC(kc);
+                Print_Pipe(p);
+            }
             break;
+
         case 4:
-            
+            if (p.diametr != -1){
+                editpipe(p);
+            }
+            else{
+                cout << "Такого объекта нет\n" << endl;
+            }
             break;
+
         case 5:
-            
+            if (kc.kolich_ceh != -1){
+                editkc(kc);
+            }
+            else{
+                cout << "Такого объекта нет\n" << endl;
+            }
             break;
+
         case 6:
             
             break;
