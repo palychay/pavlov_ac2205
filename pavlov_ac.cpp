@@ -31,7 +31,8 @@ Pipe New_Pipe(){      //vvod new pipe
     Pipe p;
     cout << "Новая труба\n";
     cout << "Километровая отметка: ";
-    cin.ignore(1000, '\n');
+    //cin.ignore(1000, '\n');
+    cin >> ws;
     getline(cin, p.kilometr_name);
     cout << "Длина(км): ";
     p.length = get_correct(1500., 0.);
@@ -76,7 +77,8 @@ KC New_KC(){        //vvod new kc
     KC kc;
     cout << "Новая КС\n";
     cout << "Название: ";
-    cin.ignore(1000, '\n');
+    //cin.ignore(1000, '\n');
+    cin >> ws;
     getline(cin, kc.name);
     cout << "Количество цехов: ";
     kc.kolich_ceh = get_correct(1500, 0);
@@ -108,8 +110,7 @@ void editkc(KC &kc){
 }
 
 
-
-void save_data(Pipe p, KC kc){
+void save_data01(const Pipe &p, const KC &kc){
     ofstream savee;
     savee.open("data.txt");
     if (savee.is_open()) //rewrite
@@ -124,53 +125,47 @@ void save_data(Pipe p, KC kc){
         savee << kc.effectivnost << endl;
     }
     savee.close();
-    cout << "Сохранение прошло успешно." << endl;
+    cout << endl;
 }
 
-/*
-vector <string> write_load_data_in_massiv(){
-    vector <string> star;
-    string s;
-    ifstream in("data.txt");
-    if (in.is_open() && !(in.eof())){
-        int i = 0;
-        while (i < 8)
-        {   getline(in, s);
-            star.push_back(s);
-            i++;
-        }
+void save_data(const Pipe &p){
+    ofstream savee;
+    savee.open("data.txt");
+    if (savee.is_open()) //rewrite
+    {   
+        savee << p.kilometr_name << endl;
+        savee << p.length << endl;
+        savee << p.diametr << endl;
+        savee << p.remont << endl;
     }
-    return star;
+    savee.close();
+    cout << endl;
 }
 
-void loading_pipe(Pipe &p, KC &kc){
-    vector <string> ps = write_load_data_in_massiv();
-    p.kilometr_name = ps[0];
-    istringstream pl(ps[1]);
-    istringstream pd(ps[2]);
-    istringstream pr(ps[3]);
-    pl >> p.length;
-    pd >> p.diametr;
-    pr >> p.remont;
-    kc.name = ps[4];
-    istringstream kcceh(ps[5]);
-    istringstream kcw(ps[6]);
-    istringstream kcef(ps[7]);
-    kcceh >> kc.kolich_ceh;
-    kcw >> kc.kolich_ceh_v_rabote;
-    kcef >> kc.effectivnost;
-    cout << "loading finished" << endl;
+void save_data1(const KC &kc){
+    ofstream savee;
+    savee.open("data.txt");
+    if (savee.is_open()) //rewrite
+    {   
+        savee << kc.name << endl;
+        savee << kc.kolich_ceh << endl;
+        savee << kc.kolich_ceh_v_rabote << endl;
+        savee << kc.effectivnost << endl;
+    }
+    savee.close();
+    cout << endl;
 }
 
-*/
+
+void load_pipe(Pipe &p){
+    
+}
 
 int Menu(){
     Pipe p;
     p.diametr = -1;
     KC kc;
     kc.kolich_ceh = -1;
-   // int k1 = 0;
-    //int k2 = 0;
     while (true){
         cout << "Меню\n";
         cout << " 1. Добавить трубу\n";
@@ -233,16 +228,30 @@ int Menu(){
             break;
 
         case 6:
-            
+            if (p.diametr != -1 && kc.kolich_ceh == -1){
+                save_data(p);
+                cout << "КС - НЕТ!\n" << endl;
+            }
+            else if (p.diametr == -1 && kc.kolich_ceh != -1){
+                save_data1(kc);
+                cout << "Трубы - НЕТ!\n" << endl;
+            }
+            else if (p.diametr == -1 && kc.kolich_ceh == -1){
+                cout << "Объектов нет!\n" << endl;
+            }
+            else{
+                save_data01(p, kc);
+            }
             break;
+
         case 7:
             
             break;
+
         case 8:
             return 0;
             break;
         default:
-            cout << "Ошибка ввода. Пожалуйста, выберите число от 1 до 8.";
             break;
         }
     }
