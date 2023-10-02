@@ -269,18 +269,54 @@ void load_data(Pipe &p, KC &kc){
             fdata.push_back(s);
         }
         if (fdata[0] == "herepipe" && fdata[5] != "herekc"){
-            fin >> forherepipe >> p.kilometr_name >> p.length >> p.diametr >> p.remont;
+            p.kilometr_name = fdata[1];
+            istringstream iss1(fdata[2]);
+            iss1 >> p.length;
+            istringstream iss2(fdata[3]);
+            iss2 >> p.diametr;
+            istringstream iss3(fdata[4]);
+            iss3 >> p.remont;
         }
         else if(fdata[0] == "herekc" && fdata[5] != "herepipe"){
-            fin >> forherekc >> kc.name >> kc.kolich_ceh >> kc.kolich_ceh_v_rabote >> kc.effectivnost;
+            kc.name = fdata[1];
+            istringstream iss1(fdata[2]);
+            iss1 >> kc.kolich_ceh;
+            istringstream iss2(fdata[3]);
+            iss2 >> kc.kolich_ceh_v_rabote;
+            istringstream iss3(fdata[4]);
+            iss3 >> kc.effectivnost;
         }
         else if(fdata[0] == "herepipe" && fdata[5] == "herekc"){
-            fin >> forherepipe >> p.kilometr_name >> p.length >> p.diametr >> p.remont
-            >> forherekc >> kc.name >> kc.kolich_ceh >> kc.kolich_ceh_v_rabote >> kc.effectivnost;
+            p.kilometr_name = fdata[1];
+            istringstream iss1(fdata[2]);
+            iss1 >> p.length;
+            istringstream iss2(fdata[3]);
+            iss2 >> p.diametr;
+            istringstream iss3(fdata[4]);
+            iss3 >> p.remont;
+            kc.name = fdata[6];
+            istringstream iss5(fdata[7]);
+            iss5 >> kc.kolich_ceh;
+            istringstream iss6(fdata[8]);
+            iss6 >> kc.kolich_ceh_v_rabote;
+            istringstream iss7(fdata[9]);
+            iss7 >> kc.effectivnost;
         }
         else if(fdata[0] == "herekc" && fdata[5] == "herepipe"){
-            fin >> forherekc >> kc.name >> kc.kolich_ceh >> kc.kolich_ceh_v_rabote >> kc.effectivnost
-            >> forherepipe >> p.kilometr_name >> p.length >> p.diametr >> p.remont;
+            kc.name = fdata[1];
+            istringstream iss1(fdata[2]);
+            iss1 >> kc.kolich_ceh;
+            istringstream iss2(fdata[3]);
+            iss2 >> kc.kolich_ceh_v_rabote;
+            istringstream iss3(fdata[4]);
+            iss3 >> kc.effectivnost;
+            p.kilometr_name = fdata[6];
+            istringstream iss5(fdata[7]);
+            iss5 >> p.length;
+            istringstream iss6(fdata[8]);
+            iss6 >> p.diametr;
+            istringstream iss7(fdata[9]);
+            iss7 >> p.remont;
         }
         fin.close();
     }
