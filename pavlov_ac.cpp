@@ -134,13 +134,13 @@ bool is_empty_file(){
 
 
 ofstream& operator << (ofstream &fout, const Pipe &p){
-    fout << p.kilometr_name << endl << p.length << endl << p.diametr << endl << p.remont << endl;
+    fout << "here_pipe\n" << p.kilometr_name << endl << p.length << endl << p.diametr << endl << p.remont << endl;
     return fout;
 
 }
 
 ofstream& operator << (ofstream &fout, const KC &kc){
-    fout << kc.name << endl << kc.kolich_ceh << endl << kc.kolich_ceh_v_rabote << endl << kc.effectivnost << endl;
+    fout << "here_kc\n" << kc.name << endl << kc.kolich_ceh << endl << kc.kolich_ceh_v_rabote << endl << kc.effectivnost << endl;
     return fout;
 }
         
@@ -189,6 +189,45 @@ void save_data(const Pipe &p, const KC &kc){
     }
 }
 
+
+void write_in_massiv(vector <string> &datf){
+    ifstream finn("data.txt");
+    string s;
+    while (getline(finn, s))
+    {
+        datf.push_back(s);
+    }
+    finn.close();
+}
+
+void load_data(Pipe &p, KC &kc){
+    if (is_empty_file()){
+        cout << "Нет данных для загрузки\n";
+    }
+    else{
+        ifstream fin("data.txt");
+        vector <string> datf;
+        write_in_massiv(datf);
+        string s1, s2, s3, s4;
+        if (fin.is_open()){
+
+        if (datf[0] == "here_pipe" && datf[5] != "here_kc"){
+            p.kilometr_name = datf[1];
+            fin >> s1 >> s2 >> p.length >> p.diametr >> p.remont;
+        }
+
+        else if(datf[0] == "here_kc"){
+            kc.name = datf[1];
+            fin >> s1 >> s2 >> kc.kolich_ceh >> kc.kolich_ceh_v_rabote >> kc.effectivnost;
+        }
+        else if(datf[0] == "here_pipe" && datf[5] == "here_kc"){
+            fin >> s1 >> s2 >> p.length >> p.diametr >> p.remont >>
+             s3 >> s4 >> kc.kolich_ceh >> kc.kolich_ceh_v_rabote >> kc.effectivnost;
+        }
+        }
+        fin.close();
+    }
+}
 
 int Menu(){
     Pipe p;
@@ -261,7 +300,7 @@ int Menu(){
             break;
 
         case 7:
-            //load_data(p, kc);
+            load_data(p, kc);
             break;
 
         case 8:
