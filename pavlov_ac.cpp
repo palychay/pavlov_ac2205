@@ -134,13 +134,14 @@ bool is_empty_file(){
 
 
 ofstream& operator << (ofstream &fout, const Pipe &p){
-    fout << "here_pipe\n" << p.kilometr_name << endl << p.length << endl << p.diametr << endl << p.remont << endl;
+    fout << "here_pipe\n" << p.kilometr_name << endl <<
+     p.length << endl << p.diametr << endl << p.remont << endl;
     return fout;
-
 }
 
 ofstream& operator << (ofstream &fout, const KC &kc){
-    fout << "here_kc\n" << kc.name << endl << kc.kolich_ceh << endl << kc.kolich_ceh_v_rabote << endl << kc.effectivnost << endl;
+    fout << "here_kc\n" << kc.name << endl << kc.kolich_ceh << endl
+     << kc.kolich_ceh_v_rabote << endl << kc.effectivnost << endl;
     return fout;
 }
         
@@ -189,6 +190,19 @@ void save_data(const Pipe &p, const KC &kc){
     }
 }
 
+ifstream& operator >> (ifstream &fin, Pipe &p){
+    fin.ignore(1000, '\n');
+    fin.ignore(1000, '\n');
+    fin >> p.length >> p.diametr >> p.remont;
+    return fin;
+}
+
+ifstream& operator >> (ifstream &fin, KC &kc){
+    fin.ignore(1000, '\n');
+    fin.ignore(1000, '\n');
+    fin >> kc.kolich_ceh >> kc.kolich_ceh_v_rabote >> kc.effectivnost;
+    return fin;
+}
 
 void write_in_massiv(vector <string> &datf){
     ifstream finn("data.txt");
@@ -208,22 +222,18 @@ void load_data(Pipe &p, KC &kc){
         ifstream fin("data.txt");
         vector <string> datf;
         write_in_massiv(datf);
-        string s1, s2, s3, s4;
-        if (fin.is_open()){
-
         if (datf[0] == "here_pipe" && datf[5] != "here_kc"){
             p.kilometr_name = datf[1];
-            fin >> s1 >> s2 >> p.length >> p.diametr >> p.remont;
+            fin >> p;
         }
-
         else if(datf[0] == "here_kc"){
             kc.name = datf[1];
-            fin >> s1 >> s2 >> kc.kolich_ceh >> kc.kolich_ceh_v_rabote >> kc.effectivnost;
+            fin >> kc;
         }
         else if(datf[0] == "here_pipe" && datf[5] == "here_kc"){
-            fin >> s1 >> s2 >> p.length >> p.diametr >> p.remont >>
-             s3 >> s4 >> kc.kolich_ceh >> kc.kolich_ceh_v_rabote >> kc.effectivnost;
-        }
+            p.kilometr_name = datf[1];
+            kc.name = datf[6];
+            fin >> p >> kc;
         }
         fin.close();
     }

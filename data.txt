@@ -1,5 +1,5 @@
-here_pipe
-45 moscow
-45
-125
-0
+here_kc
+fd df fd 5
+5
+1
+1
