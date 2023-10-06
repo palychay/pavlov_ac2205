@@ -89,7 +89,7 @@ KC New_KC(){        //vvod new kc
     return kc;
 }
 
-void Print_KC(KC kc){   //output new kc
+void Print_KC(const KC &kc){   //output new kc
     cout << "Ваша KC\n";
     cout << "Название КС: ";
     cout << kc.name << endl;
@@ -109,8 +109,7 @@ void editkc(KC &kc){
 }
 
 
-
-bool is_empty_pipe(Pipe p){
+bool is_empty_pipe(const Pipe &p){
     if (p.diametr == -1){
         return true;
     }
@@ -119,7 +118,7 @@ bool is_empty_pipe(Pipe p){
     }
 }
 
-bool is_empty_kc(KC kc){
+bool is_empty_kc(const KC &kc){
     if (kc.kolich_ceh == -1){
         return true;
     }
@@ -130,197 +129,66 @@ bool is_empty_kc(KC kc){
 
 bool is_empty_file(){
     ifstream file("data.txt");
-    if (file.peek() == ifstream::traits_type::eof()){
-        return true;
-    }
-    else{
-        return false;
-    }
+    return (file.peek() == ifstream::traits_type::eof());
 }
 
+
+ofstream& operator << (ofstream &fout, const Pipe &p){
+    fout << p.kilometr_name << endl << p.length << endl << p.diametr << endl << p.remont << endl;
+    return fout;
+
+}
+
+ofstream& operator << (ofstream &fout, const KC &kc){
+    fout << kc.name << endl << kc.kolich_ceh << endl << kc.kolich_ceh_v_rabote << endl << kc.effectivnost << endl;
+    return fout;
+}
+        
 void save_data(const Pipe &p, const KC &kc){
-    ifstream fin("data.txt");
     if (is_empty_file()){
         ofstream fout("data.txt");
-        if (is_empty_pipe(p) == false && is_empty_kc(kc) == false){
-            fout << "herepipe\n" << p.kilometr_name << endl << p.length << endl << p.diametr << endl << p.remont << endl
-            << "herekc\n" << kc.name << endl << kc.kolich_ceh << endl << kc.kolich_ceh_v_rabote << endl << kc.effectivnost << endl;
+        if (is_empty_pipe(p) == true && is_empty_kc(kc) == true){
+            cout << "Нет данных для сохранения\n";
         }
         else if (is_empty_pipe(p) == false && is_empty_kc(kc) == true){
-            fout << "herepipe\n" << p.kilometr_name << endl << p.length << endl << p.diametr << endl << p.remont << endl;
+            fout << p;
         }
         else if (is_empty_pipe(p) == true && is_empty_kc(kc) == false){
-            fout << "herekc\n" << kc.name << endl << kc.kolich_ceh << endl << kc.kolich_ceh_v_rabote
-             << endl << kc.effectivnost << endl;
+            fout << kc;
         }
         else{
-            cout << "НЕТ ДАННЫХ ДЛЯ СОХРАНЕНИЯ\n";
+            fout << p << kc;
         }
         fout.close();
     }
     else{
-        string s;
-        vector <string> datf;
-        while(getline(fin, s)){
-            datf.push_back(s);
+        if (is_empty_pipe(p) == true && is_empty_kc(kc) == true){
+            cout << "Нет данных для сохранения\n";
         }
-        
-        if (is_empty_pipe(p) == false && is_empty_kc(kc) == false){
-            ofstream fout("data.txt");
-            fout << "herepipe\n" << p.kilometr_name << endl << p.length << endl << p.diametr << endl << p.remont << endl
-            << "herekc\n" << kc.name << endl << kc.kolich_ceh << endl <<
-             kc.kolich_ceh_v_rabote << endl << kc.effectivnost << endl;
-             fout.close();
-        }
-
-        else if (is_empty_pipe(p) == false && is_empty_kc(kc) == true){
-            if (datf[0] == "herepipe" && datf[5] != "herekc"){
-                ofstream fout("data.txt");
-                fout << "herepipe\n" << p.kilometr_name << endl << p.length << endl
-                 << p.diametr << endl << p.remont << endl;
-                 fout.close();
-            }
-            if (datf[0] == "herepipe" && datf[5] == "herekc"){
-                ofstream fout("data.txt");
-                fout << "herepipe\n" << p.kilometr_name << endl << p.length << endl
-                 << p.diametr << endl << p.remont << endl;
-                for (int i = 5; i < 10; i++){
-                    fout << datf[i] << endl;
-                }
-                fout.close();
-            }
-            if (datf[0] == "herekc" && datf[5] != "herepipe"){
-                ofstream fout("data.txt");
-                for (int i = 0; i < 5; i++){
-                    fout << datf[i] << endl;
-                }
-                fout << "herepipe\n" << p.kilometr_name << endl << p.length << endl
-                 << p.diametr << endl << p.remont << endl;
-                 fout.close();
-            }
-            if (datf[0] == "herekc" && datf[5] == "herepipe"){
-                ofstream fout("data.txt");
-                for (int i = 0; i < 5; i++){
-                    fout << datf[i] << endl;
-                }
-                fout << "herepipe\n" << p.kilometr_name << endl << p.length << endl
-                 << p.diametr << endl << p.remont << endl;
-                 fout.close();
-            }
-        }
-
-        else if (is_empty_pipe(p) == true && is_empty_kc(kc) == false){
-            if (datf[0] == "herekc" && datf[5] != "herepipe"){
-                ofstream fout("data.txt");
-                fout << "herekc\n" << kc.name << endl << kc.kolich_ceh << endl <<
-             kc.kolich_ceh_v_rabote << endl << kc.effectivnost << endl;
-             fout.close();
-            }
-            if (datf[0] == "herekc" && datf[5] == "herepipe"){
-                ofstream fout("data.txt");
-                fout << "herekc\n" << kc.name << endl << kc.kolich_ceh << endl <<
-             kc.kolich_ceh_v_rabote << endl << kc.effectivnost << endl;
-                for (int i = 5; i < 10; i++){
-                    fout << datf[i] << endl;
-                }
-                fout.close();
-            }
-            if (datf[0] == "herepipe" && datf[5] != "herekc"){
-                ofstream fout("data.txt");
-                for (int i = 0; i < 5; i++){
-                    fout << datf[i] << endl;
-                }
-                fout << "herekc\n" << kc.name << endl << kc.kolich_ceh << endl <<
-             kc.kolich_ceh_v_rabote << endl << kc.effectivnost << endl;
-             fout.close();
-            }
-            if (datf[0] == "herepipe" && datf[5] == "herekc"){
-                ofstream fout("data.txt");
-                for (int i = 0; i < 5; i++){
-                    fout << datf[i] << endl;
-                }
-                fout << "herekc\n" << kc.name << endl << kc.kolich_ceh << endl <<
-             kc.kolich_ceh_v_rabote << endl << kc.effectivnost << endl;
-             fout.close();
-            }
-            
-        }
-
         else{
-            cout << "НЕТ ДАННЫХ ДЛЯ СОХРАНЕНИЯ\n";
+            cout << "Файл не пуст. Вы точно хотите перезаписать данные?(yes/no): ";
+            string s;
+            cin >> s;
+            if (s == "yes"){
+                ofstream fout("data.txt");
+                if (is_empty_pipe(p) == false && is_empty_kc(kc) == true){
+                    fout << p;
+                    }
+                else if (is_empty_pipe(p) == true && is_empty_kc(kc) == false){
+                    fout << kc;
+                    }
+                else if (is_empty_pipe(p) == false && is_empty_kc(kc) == false){
+                    fout << p << kc;
+                    }
+                fout.close();
+            }
+            else{
+                cout << "Выберите другой файл для сохранения\n";
+            }
         }
-        
-    }
-    fin.close();
-}
-
-
-void load_data(Pipe &p, KC &kc){
-    if (is_empty_file()){
-        cout << "НЕТ ДАННЫХ ДЛЯ ЗАГРУЗКИ\n";
-    }
-    else{
-        ifstream fin("data.txt");
-        string forherepipe;
-        string forherekc;
-        vector <string> fdata;
-        string s;
-        while (getline(fin, s)){
-            fdata.push_back(s);
-        }
-        if (fdata[0] == "herepipe" && fdata[5] != "herekc"){
-            p.kilometr_name = fdata[1];
-            istringstream iss1(fdata[2]);
-            iss1 >> p.length;
-            istringstream iss2(fdata[3]);
-            iss2 >> p.diametr;
-            istringstream iss3(fdata[4]);
-            iss3 >> p.remont;
-        }
-        else if(fdata[0] == "herekc" && fdata[5] != "herepipe"){
-            kc.name = fdata[1];
-            istringstream iss1(fdata[2]);
-            iss1 >> kc.kolich_ceh;
-            istringstream iss2(fdata[3]);
-            iss2 >> kc.kolich_ceh_v_rabote;
-            istringstream iss3(fdata[4]);
-            iss3 >> kc.effectivnost;
-        }
-        else if(fdata[0] == "herepipe" && fdata[5] == "herekc"){
-            p.kilometr_name = fdata[1];
-            istringstream iss1(fdata[2]);
-            iss1 >> p.length;
-            istringstream iss2(fdata[3]);
-            iss2 >> p.diametr;
-            istringstream iss3(fdata[4]);
-            iss3 >> p.remont;
-            kc.name = fdata[6];
-            istringstream iss5(fdata[7]);
-            iss5 >> kc.kolich_ceh;
-            istringstream iss6(fdata[8]);
-            iss6 >> kc.kolich_ceh_v_rabote;
-            istringstream iss7(fdata[9]);
-            iss7 >> kc.effectivnost;
-        }
-        else if(fdata[0] == "herekc" && fdata[5] == "herepipe"){
-            kc.name = fdata[1];
-            istringstream iss1(fdata[2]);
-            iss1 >> kc.kolich_ceh;
-            istringstream iss2(fdata[3]);
-            iss2 >> kc.kolich_ceh_v_rabote;
-            istringstream iss3(fdata[4]);
-            iss3 >> kc.effectivnost;
-            p.kilometr_name = fdata[6];
-            istringstream iss5(fdata[7]);
-            iss5 >> p.length;
-            istringstream iss6(fdata[8]);
-            iss6 >> p.diametr;
-            istringstream iss7(fdata[9]);
-            iss7 >> p.remont;
-        }
-        fin.close();
     }
 }
+
 
 int Menu(){
     Pipe p;
@@ -365,8 +233,8 @@ int Menu(){
                 cout << "Объектов нет!\n" << endl;
             }
             else{
-                Print_KC(kc);
                 Print_Pipe(p);
+                Print_KC(kc);
             }
             break;
 
@@ -393,7 +261,7 @@ int Menu(){
             break;
 
         case 7:
-            load_data(p, kc);
+            //load_data(p, kc);
             break;
 
         case 8:
@@ -404,7 +272,6 @@ int Menu(){
         }
     }
 }
-
 
 
 int main(){
