@@ -129,7 +129,7 @@ bool is_empty_kc(const KC &kc){
 
 bool is_empty_file(){
     ifstream file("data.txt");
-    return (file.peek() == ifstream::traits_type::eof());
+    return (!file || file.peek() == ifstream::traits_type::eof());
 }
 
 
@@ -145,61 +145,44 @@ ofstream& operator << (ofstream &fout, const KC &kc){
     return fout;
 }
         
-void save_data(const Pipe &p, const KC &kc){
-    if (is_empty_file()){
-        ofstream fout("data.txt");
-        if (is_empty_pipe(p) == true && is_empty_kc(kc) == true){
-            cout << "Нет данных для сохранения\n";
-        }
-        else if (is_empty_pipe(p) == false && is_empty_kc(kc) == true){
-            fout << p;
-        }
-        else if (is_empty_pipe(p) == true && is_empty_kc(kc) == false){
-            fout << kc;
-        }
-        else{
-            fout << p << kc;
-        }
-        fout.close();
+void save_data(const Pipe &p, const KC &kc)
+{   
+    if (is_empty_pipe(p) == true && is_empty_kc(kc) == true){
+        cout << "Нет данных для сохранения\n";
+        return;
     }
-    else{
-        if (is_empty_pipe(p) == true && is_empty_kc(kc) == true){
-            cout << "Нет данных для сохранения\n";
-        }
-        else{
-            cout << "Файл не пуст. Вы точно хотите перезаписать данные?(yes/no): ";
-            string s;
-            cin >> s;
-            if (s == "yes"){
-                ofstream fout("data.txt");
-                if (is_empty_pipe(p) == false && is_empty_kc(kc) == true){
-                    fout << p;
-                    }
-                else if (is_empty_pipe(p) == true && is_empty_kc(kc) == false){
-                    fout << kc;
-                    }
-                else if (is_empty_pipe(p) == false && is_empty_kc(kc) == false){
-                    fout << p << kc;
-                    }
-                fout.close();
-            }
-            else{
-                cout << "Выберите другой файл для сохранения\n";
-            }
+
+    if (!is_empty_file())
+    {
+        cout << "Файл не пуст. Вы точно хотите перезаписать данные?(yes/no): ";
+        string s;
+        cin >> s;//!!!
+        if (s == "no")
+        {
+            cout << "Выберите другой файл для сохранения\n";
+            return;
         }
     }
+    ofstream fout("data.txt");
+    if (!is_empty_pipe(p))
+        fout << p;
+    if (!is_empty_kc(kc))
+        fout << kc;
+    fout.close();
 }
 
+
+
 ifstream& operator >> (ifstream &fin, Pipe &p){
-    fin.ignore(1000, '\n');
-    fin.ignore(1000, '\n');
+    fin>>ws;
+    getline(fin, p.kilometr_name);
     fin >> p.length >> p.diametr >> p.remont;
     return fin;
 }
 
 ifstream& operator >> (ifstream &fin, KC &kc){
-    fin.ignore(1000, '\n');
-    fin.ignore(1000, '\n');
+    fin>>ws;
+    getline(fin, kc.name);
     fin >> kc.kolich_ceh >> kc.kolich_ceh_v_rabote >> kc.effectivnost;
     return fin;
 }
@@ -217,27 +200,20 @@ void write_in_massiv(vector <string> &datf){
 void load_data(Pipe &p, KC &kc){
     if (is_empty_file()){
         cout << "Нет данных для загрузки\n";
+        return;
     }
-    else{
-        ifstream fin("data.txt");
-        vector <string> datf;
-        write_in_massiv(datf);
-        if (datf[0] == "here_pipe" && datf[5] != "here_kc"){
-            p.kilometr_name = datf[1];
-            fin >> p;
-        }
-        else if(datf[0] == "here_kc"){
-            kc.name = datf[1];
-            fin >> kc;
-        }
-        else if(datf[0] == "here_pipe" && datf[5] == "here_kc"){
-            p.kilometr_name = datf[1];
-            kc.name = datf[6];
-            fin >> p >> kc;
-        }
-        fin.close();
+    
+    ifstream fin("data.txt");
+    string s;
+    while (getline(fin, s))
+    {
+        if(s == "here_kc")
+            fin >> kc;        
+        else if(s == "here_pipe")
+            fin >> p ;
     }
 }
+
 
 int Menu(){
     Pipe p;
