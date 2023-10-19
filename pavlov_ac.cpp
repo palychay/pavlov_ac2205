@@ -1,22 +1,10 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <sstream>
 #include <vector>
+#include "correct_input.h"
 
 using namespace std;
-
-template <typename T> 
-T get_correct(T max, T min){
-    T x;
-	while ((cin >> x).fail() || cin.peek() != '\n' || x < min || x > max)	// is buffer empty (int/float check)
-	{
-		cin.clear();
-		cin.ignore(10000, '\n');
-		cout << "Неправильный ввод. Пожалуйста, введите еще раз:  ";
-	}
-    return x;
-}
 
 
 struct Pipe  // труба
@@ -147,16 +135,15 @@ ofstream& operator << (ofstream &fout, const KC &kc){
         
 void save_data(const Pipe &p, const KC &kc)
 {   
-    if (is_empty_pipe(p) == true && is_empty_kc(kc) == true){
+    if (is_empty_pipe(p) && is_empty_kc(kc)){
         cout << "Нет данных для сохранения\n";
         return;
     }
-
     if (!is_empty_file())
     {
         cout << "Файл не пуст. Вы точно хотите перезаписать данные?(yes/no): ";
         string s;
-        cin >> s;//!!!
+        cin >> s;//!
         if (s == "no")
         {
             cout << "Выберите другой файл для сохранения\n";
@@ -187,22 +174,13 @@ ifstream& operator >> (ifstream &fin, KC &kc){
     return fin;
 }
 
-void write_in_massiv(vector <string> &datf){
-    ifstream finn("data.txt");
-    string s;
-    while (getline(finn, s))
-    {
-        datf.push_back(s);
-    }
-    finn.close();
-}
 
 void load_data(Pipe &p, KC &kc){
     if (is_empty_file()){
         cout << "Нет данных для загрузки\n";
         return;
     }
-    
+
     ifstream fin("data.txt");
     string s;
     while (getline(fin, s))
