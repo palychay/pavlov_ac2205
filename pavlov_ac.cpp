@@ -3,50 +3,13 @@
 #include <string>
 #include <vector>
 #include "correct_input.h"
+#include "pipe.h"
 
 using namespace std;
 
 
-struct Pipe  // труба
-{
-    string kilometr_name;
-    double length;
-    int diametr;
-    bool remont;
-};
-
-Pipe New_Pipe(){      //vvod new pipe
-    Pipe p;
-    cout << "Новая труба\n";
-    cout << "Километровая отметка: ";
-    //cin.ignore(1000, '\n');
-    cin >> ws;
-    getline(cin, p.kilometr_name);
-    cout << "Длина(км): ";
-    p.length = get_correct(1500., 0.);
-    cout << "Диаметр трубы(мм): ";
-    p.diametr = get_correct(1500, 0);
-    cout << "Признак в ремонте(0 - нет or 1 - да): ";
-    p.remont = get_correct(true, false);
-    cout << endl;
-    return p;
-}
-
-void Print_Pipe(const Pipe &p){   //output new pipe
-    cout << "Ваша труба:\n";
-    cout << "Километровая отметка: ";
-    cout << p.kilometr_name << endl;
-    cout << "Длина(в километрах): ";
-    cout << p.length << endl;
-    cout << "Диаметр трубы(в миллиметрах): ";
-    cout << p.diametr << endl;
-    cout << "Признак в ремонте(0 - нет, 1 - да): ";
-    cout << p.remont << endl;
-    cout << endl;
-}
-
 void editpipe(Pipe &p){
-    cout << "Признак в ремонте(0 - нет or 1 - да): ";
+    cout << "a sign in repair(0 - no or 1 - yes): ";
     p.remont = get_correct(true, false);
     cout << endl;
 }
@@ -62,36 +25,35 @@ struct KC // компрессорная станция
 
 KC New_KC(){        //vvod new kc
     KC kc;
-    cout << "Новая КС\n";
-    cout << "Название: ";
-    //cin.ignore(1000, '\n');
+    cout << "new КС\n";
+    cout << "name: ";
     cin >> ws;
     getline(cin, kc.name);
-    cout << "Количество цехов: ";
+    cout << "number of workshops: ";
     kc.kolich_ceh = get_correct(1500, 0);
-    cout << "Количество работающих цехов.(Может возникнуть ошибка, если их будет больше всего кол-ва цехов.): ";
+    cout << "The number of working workshops.(An error may occur if there are more of them than the total number of workshops.): ";
     kc.kolich_ceh_v_rabote = get_correct(kc.kolich_ceh, 0);
-    cout << "Ввод эффективности(от 0 до 1, включая все числа между ними): ";
+    cout << "Efficiency input(from 0 to 1, including all numbers between them): ";
     kc.effectivnost = get_correct(1., 0.);
     cout << endl;
     return kc;
 }
 
 void Print_KC(const KC &kc){   //output new kc
-    cout << "Ваша KC\n";
-    cout << "Название КС: ";
+    cout << "your kc\n";
+    cout << "name kc: ";
     cout << kc.name << endl;
-    cout << "Количество цехов: ";
+    cout << "Number of workshops: ";
     cout << kc.kolich_ceh << endl;
-    cout << "Количество цехов в работе ";
+    cout << "Number of workshops in operation: ";
     cout << kc.kolich_ceh_v_rabote << endl;
-    cout << "Эффективность КС: ";
+    cout << "kc efficiency: ";
     cout << kc.effectivnost << endl;
     cout << endl;
 }
 
 void editkc(KC &kc){
-    cout << "Количество работающих цехов.(Может возникнуть ошибка, если их будет больше всего кол-ва цехов.): ";
+    cout << "The number of working workshops.(An error may occur if there are more of them than the total number of workshops.): ";
     kc.kolich_ceh_v_rabote = get_correct(kc.kolich_ceh, 0);
     cout << endl;
 }
@@ -136,17 +98,17 @@ ofstream& operator << (ofstream &fout, const KC &kc){
 void save_data(const Pipe &p, const KC &kc)
 {   
     if (is_empty_pipe(p) && is_empty_kc(kc)){
-        cout << "Нет данных для сохранения\n";
+        cout << "No data to save\n";
         return;
     }
     if (!is_empty_file())
     {
-        cout << "Файл не пуст. Вы точно хотите перезаписать данные?(yes/no): ";
+        cout << "The file is not empty. Are you sure you want to overwrite the data?(yes/no): ";
         string s;
         cin >> s;//!
         if (s == "no")
         {
-            cout << "Выберите другой файл для сохранения\n";
+            cout << "Select another file to save\n";
             return;
         }
     }
@@ -177,7 +139,7 @@ ifstream& operator >> (ifstream &fin, KC &kc){
 
 void load_data(Pipe &p, KC &kc){
     if (is_empty_file()){
-        cout << "Нет данных для загрузки\n";
+        cout << "no data\n";
         return;
     }
 
@@ -199,24 +161,24 @@ int Menu(){
     KC kc;
     kc.kolich_ceh = -1;
     while (true){
-        cout << "Меню\n";
-        cout << " 1. Добавить трубу\n";
-        cout << " 2. Добавить КС\n";
-        cout << " 3. Просмотр доступных объектов\n";
-        cout << " 4. Редактировать трубу\n";
-        cout << " 5. Редактировать КС\n";
-        cout << " 6. Сохранить\n";
-        cout << " 7. Загрузить\n";
-        cout << " 8. Выход\n";
+        cout << "menu\n";
+        cout << " 1. add pipe\n";
+        cout << " 2. add kc\n";
+        cout << " 3. Viewing available objects\n";
+        cout << " 4. edit pipe\n";
+        cout << " 5. edit kc\n";
+        cout << " 6. save\n";
+        cout << " 7. to load\n";
+        cout << " 8. exit\n";
         cout << endl;
         int choice;//!!!
-        cout << "Пожалуйста, выберите число от 1 до 8: ";
+        cout << "Please choose a number from 1 to 8: ";
         choice = get_correct(8, 1);
         cout << endl;
         switch (choice)
         {
         case 1:
-            p = New_Pipe();
+            p.new_pipe();
             break;
 
         case 2:
@@ -225,18 +187,18 @@ int Menu(){
 
         case 3:
             if (is_empty_pipe(p) == false && is_empty_kc(kc) == true){
-                Print_Pipe(p);
-                cout << "КС - НЕТ!\n" << endl;
+                p.Print_Pipe();
+                cout << "kc - no!\n" << endl;
             }
             else if (is_empty_pipe(p) == true && is_empty_kc(kc) == false){
                 Print_KC(kc);
-                cout << "Трубы - НЕТ!\n" << endl;
+                cout << "pipe - no!\n" << endl;
             }
             else if (is_empty_pipe(p) == true && is_empty_kc(kc) == true){
-                cout << "Объектов нет!\n" << endl;
+                cout << "objects no!\n" << endl;
             }
             else{
-                Print_Pipe(p);
+                p.Print_Pipe();
                 Print_KC(kc);
             }
             break;
@@ -246,7 +208,7 @@ int Menu(){
                 editpipe(p);
             }
             else{
-                cout << "Такого объекта нет\n" << endl;
+                cout << "There is no such object\n" << endl;
             }
             break;
 
@@ -255,7 +217,7 @@ int Menu(){
                 editkc(kc);
             }
             else{
-                cout << "Такого объекта нет\n" << endl;
+                cout << "There is no such object\n" << endl;
             }
             break;
 

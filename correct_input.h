@@ -7,7 +7,7 @@ T get_correct(T max, T min){
 	{
 		std::cin.clear();
 		std::cin.ignore(10000, '\n');
-		std::cout << "Неправильный ввод. Пожалуйста, введите еще раз:  ";
+		std::cout << "Incorrect input. Please enter again:  ";
 	}
     return x;
 }
