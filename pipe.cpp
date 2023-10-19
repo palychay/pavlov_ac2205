@@ -16,7 +16,7 @@ void Pipe::new_pipe()
     cout << endl;
 }
 
-void Pipe::Print_Pipe()
+void Pipe::Print_Pipe() const
 {
     cout << "Your pipe:\n";
         cout << "Kilometer mark: ";
@@ -29,3 +29,19 @@ void Pipe::Print_Pipe()
         cout << remont << endl;
         cout << endl;
 }
+
+void Pipe::editpipe(){
+    cout << "a sign in repair(0 - no or 1 - yes): ";
+    remont = get_correct(true, false);
+    cout << endl;
+}
+
+bool Pipe::is_empty_pipe() const{
+    if (diametr == -1){
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+

@@ -13,6 +13,9 @@ class Pipe  // труба
     bool remont;
 
     void new_pipe();
-    void Print_Pipe();
+    void Print_Pipe() const;
+    void editpipe();
+    bool is_empty_pipe() const;
+
     
 };
