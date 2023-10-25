@@ -1,8 +1,18 @@
 #include "pipe.h"
 #include "correct_input.h"
 
+int Pipe::MaxID = 0;
+
+ostream& operator << (ostream &out, const Pipe &p){
+    out << "pipe name: " << p.kilometr_name  << "\t" << "length: " << p.length << "\t"
+    << "pipe diametr: " << p.diametr << "\t"
+    << "pipe is remont: " << p.remont << endl;
+    return out;
+}
+
 void Pipe::new_pipe()
 {
+    id = ++MaxID;
     cout << "New pipe\n";
     cout << "Kilometer mark: ";
     cin >> ws;
@@ -37,7 +47,7 @@ void Pipe::editpipe(){
 }
 
 bool Pipe::is_empty_pipe() const{
-    if (diametr == -1){
+    if (MaxID == 0){
         return true;
     }
     else{

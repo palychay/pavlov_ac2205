@@ -5,6 +5,7 @@
 #include "correct_input.h"
 #include "pipe.h"
 #include "kc.h"
+#include <unordered_map>
 
 using namespace std;
 
@@ -13,7 +14,6 @@ bool is_empty_file(){
     ifstream file("data.txt");
     return (!file || file.peek() == ifstream::traits_type::eof());
 }
-
 
 ofstream& operator << (ofstream &fout, const Pipe &p){
     fout << "here_pipe\n" << p.kilometr_name << endl <<
@@ -84,7 +84,6 @@ void load_data(Pipe &p, KC &kc){
     }
 }
 
-
 void text_menu(){
     cout << "menu\n";
     cout << " 1. add pipe\n";
@@ -98,11 +97,27 @@ void text_menu(){
     cout << endl;
 }
 
+void out_kcmap(unordered_map <int, KC> &kcmap){
+    for (const auto& [id, kc] : kcmap){
+        cout << "id: " << id << "\t" << kc;
+    }
+}
+
+void out_pmap(unordered_map <int, Pipe> &pmap){
+    for (const auto& [id, p] : pmap){
+        cout << "id: " << id << "\t" << p;
+    }
+}
+
+
+
+
+
 int Menu(){
+    unordered_map <int, KC> kcmap;
+    unordered_map <int, Pipe> pmap;
     Pipe p;
-    p.diametr = -1;
     KC kc;
-    kc.kolich_ceh = -1;
     while (true){
         text_menu();
         int choice;//!!!
@@ -113,27 +128,37 @@ int Menu(){
         {
         case 1:
             p.new_pipe();
+            pmap[p.id] = p;
             break;
 
         case 2:
-            kc.new_kc();
+            kc.add_new_kc();
+            kcmap[kc.id] = kc;
             break;
 
         case 3:
             if (p.is_empty_pipe() == false && kc.is_empty_kc() == true){
-                p.Print_Pipe();
+                cout << "Yours pipes:\n";
+                out_pmap(pmap);
                 cout << "kc - no!\n" << endl;
+                cout << endl;
             }
             else if (p.is_empty_pipe() == true && kc.is_empty_kc() == false){
-                kc.Print_KC();
+                cout << "Yours kcs:\n";
+                out_kcmap(kcmap);
                 cout << "pipe - no!\n" << endl;
+                cout << endl;
             }
             else if (p.is_empty_pipe() == true && kc.is_empty_kc() == true){
                 cout << "objects no!\n" << endl;
             }
             else{
-                p.Print_Pipe();
-                kc.Print_KC();
+                cout << "Yours pipes:\n";
+                out_pmap(pmap);
+                cout << endl;
+                cout << "Yours kcs:\n";
+                out_kcmap(kcmap);
+                cout << endl;
             }
             break;
 
@@ -148,7 +173,7 @@ int Menu(){
 
         case 5:
             if (!(kc.is_empty_kc())){
-                kc.editkc();
+                kc.editkc(kcmap);
             }
             else{
                 cout << "There is no such object\n" << endl;
