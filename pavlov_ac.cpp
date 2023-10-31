@@ -7,20 +7,22 @@
 #include "kc.h"
 #include <unordered_map>
 
+
 using namespace std;
+
 
 
 bool is_empty_file(){
     ifstream file("data.txt");
     return (!file || file.peek() == ifstream::traits_type::eof());
 }
-
+/*
 ofstream& operator << (ofstream &fout, const Pipe &p){
     fout << "here_pipe\n" << p.kilometr_name << endl <<
      p.length << endl << p.diametr << endl << p.remont << endl;
     return fout;
 }
-
+*/
 ofstream& operator << (ofstream &fout, const KC &kc){
     fout << "here_kc\n" << kc.name << endl << kc.kolich_ceh << endl
      << kc.kolich_ceh_v_rabote << endl << kc.effectivnost << endl;
@@ -52,21 +54,21 @@ void save_data(const Pipe &p, const KC &kc)
     fout.close();
 }
 
-
+/*
 ifstream& operator >> (ifstream &fin, Pipe &p){
     fin>>ws;
     getline(fin, p.kilometr_name);
     fin >> p.length >> p.diametr >> p.remont;
     return fin;
 }
-
+*/
 ifstream& operator >> (ifstream &fin, KC &kc){
     fin>>ws;
     getline(fin, kc.name);
     fin >> kc.kolich_ceh >> kc.kolich_ceh_v_rabote >> kc.effectivnost;
     return fin;
 }
-
+/*
 void load_data(Pipe &p, KC &kc){
     if (is_empty_file()){
         cout << "no data\n";
@@ -83,7 +85,7 @@ void load_data(Pipe &p, KC &kc){
             fin >> p ;
     }
 }
-
+*/
 void text_menu(){
     cout << "menu\n";
     cout << " 1. add pipe\n";
@@ -110,10 +112,8 @@ void out_pmap(unordered_map <int, Pipe> &pmap){
 }
 
 
-
-
-
 int Menu(){
+    
     unordered_map <int, KC> kcmap;
     unordered_map <int, Pipe> pmap;
     Pipe p;
@@ -128,7 +128,7 @@ int Menu(){
         {
         case 1:
             p.new_pipe();
-            pmap[p.id] = p;
+            pmap[p.getID()] = p;
             break;
 
         case 2:
@@ -185,7 +185,7 @@ int Menu(){
             break;
 
         case 7:
-            load_data(p, kc);
+            /*load_data(p, kc);*/
             break;
 
         case 8:
@@ -199,6 +199,10 @@ int Menu(){
 
 
 int main(){
+    redirect_output_wrapper cerr_out(cerr);
+	ofstream logfile("log_");
+	if (logfile)
+		cerr_out.redirect(logfile);
     Menu();
     return 0;
 }

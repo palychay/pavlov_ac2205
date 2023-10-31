@@ -6,7 +6,7 @@ using namespace std;
 
 class Pipe  // труба
 {   
-    public:
+private:
     static int MaxID;
     int id;
 
@@ -15,10 +15,13 @@ class Pipe  // труба
     int diametr = -1;
     bool remont;
 
+public:
     void new_pipe();
     void Print_Pipe() const;
     void editpipe();
     bool is_empty_pipe() const;
+    int getID() const;
+    bool getrepair();
 
     friend std::ostream& operator << (std::ostream& out, const Pipe &p);
 };

@@ -55,3 +55,6 @@ bool Pipe::is_empty_pipe() const{
     }
 }
 
+int Pipe::getID() const{
+    return id;
+}
