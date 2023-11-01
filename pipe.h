@@ -1,6 +1,6 @@
 #include <iostream>
 #include <string>
-
+#include <unordered_map>
 
 using namespace std;
 
@@ -16,12 +16,18 @@ private:
     bool remont;
 
 public:
+    int getID() const;
+    string getKmname() const;
+    bool getRepair() const;
+
     void new_pipe();
     void Print_Pipe() const;
     void editpipe();
+    void delpipe(unordered_map <int, Pipe> &pmap, int &key);
+
     bool is_empty_pipe() const;
-    int getID() const;
-    bool getrepair();
+
+    
 
     friend std::ostream& operator << (std::ostream& out, const Pipe &p);
 };

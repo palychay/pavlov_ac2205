@@ -41,9 +41,12 @@ void Pipe::Print_Pipe() const
 }
 
 void Pipe::editpipe(){
-    cout << "a sign in repair(0 - no or 1 - yes): ";
-    remont = get_correct(true, false);
+    remont = !remont;
     cout << endl;
+}
+
+void Pipe::delpipe(unordered_map <int, Pipe> &pmap, int &key){
+    pmap.erase(key);
 }
 
 bool Pipe::is_empty_pipe() const{
@@ -57,4 +60,12 @@ bool Pipe::is_empty_pipe() const{
 
 int Pipe::getID() const{
     return id;
+}
+
+string Pipe::getKmname() const{
+    return kilometr_name;
+}
+
+bool Pipe::getRepair() const{
+    return remont;
 }
