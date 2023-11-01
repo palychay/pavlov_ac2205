@@ -45,9 +45,7 @@ void Pipe::editpipe(){
     cout << endl;
 }
 
-void Pipe::delpipe(unordered_map <int, Pipe> &pmap, int &key){
-    pmap.erase(key);
-}
+
 
 bool Pipe::is_empty_pipe() const{
     if (MaxID == 0){

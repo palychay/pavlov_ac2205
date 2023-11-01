@@ -145,6 +145,37 @@ void editPipe_byrepair(unordered_map <int, Pipe> &pmap, bool &b){
     }
 }
 
+void delallPipe(unordered_map <int, Pipe> &pmap){
+    unordered_map <int, Pipe> newmap;
+    pmap = newmap;
+    Pipe::MaxID = 0;
+}
+
+void delPipe_byname(unordered_map <int, Pipe> &pmap, string &s){
+    if (pmap.size() == 1){
+        delallPipe(pmap);
+    }
+    else{
+        int k = 0;
+        for (auto& [id, p] : pmap){
+            if (CheckByName(p, s)){
+                k++;
+            }
+        }
+        if (k == pmap.size()){
+            delallPipe(pmap);
+        }
+        else{
+            for (auto& [id, p] : pmap){
+            if (CheckByName(p, s)){
+                pmap.erase(id);
+            }
+        }
+        }
+    }
+}
+
+
 void out_kcmap(unordered_map <int, KC> &kcmap){
     for (const auto& [id, kc] : kcmap){
         cout << "id: " << id << "\t" << kc;
@@ -232,16 +263,16 @@ int Menu(){
                     }
                 }
                 else{
-                    cout << "Delete all pipes-0 or by filter name-1 or by filter repair-2: ";
-                    i = get_correct(2, 0);
-                    if (i == 2){
-
-                    }
-                    else if (i == 1){
-
+                    cout << "Delete all pipes-0 or by filter name-1: ";
+                    i = get_correct(1, 0);
+                    if (i == 1){
+                        cout << "name: ";
+                        string s;
+                        cin >> s;
+                        delPipe_byname(pmap, s);
                     }
                     else{
-
+                        delallPipe(pmap);
                     }
                 }
             }
