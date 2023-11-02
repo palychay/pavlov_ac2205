@@ -11,6 +11,19 @@ ostream& operator << (ostream &out, const KC &kc){
     return out;
 }
 
+ofstream& operator << (ofstream &fout, const KC &kc){
+    fout << "here_kc\n" << kc.id << endl << kc.name << endl << kc.kolich_ceh << endl
+     << kc.kolich_ceh_v_rabote << endl << kc.effectivnost << endl;
+    return fout;
+}
+
+ifstream& operator >> (ifstream &fin, KC &kc){
+    fin >> kc.id;
+    fin>>ws;
+    getline(fin, kc.name);
+    fin >> kc.kolich_ceh >> kc.kolich_ceh_v_rabote >> kc.effectivnost;
+    return fin;
+}
 
 void KC::add_new_kc(){
     id = ++MaxID;
@@ -26,16 +39,8 @@ void KC::add_new_kc(){
     cout << endl;
 }
 
-void KC::editkc(unordered_map <int, KC> &kcmap){
-    int cehi;
-    cout << "The number of working workshops.(An error may occur if there are more of them than the total number of workshops.): ";
-    cehi = get_correct(kolich_ceh, 0);
-        for (auto& [id, kc] : kcmap){
-            if (kc.kolich_ceh > cehi){
-                kc.kolich_ceh_v_rabote = cehi;
-            }
-            kc.effectivnost = (double (kc.kolich_ceh_v_rabote) / double(kc.kolich_ceh)) * 100;
-        }
+void KC::editkc(int &wceh){
+    effectivnost = (double(wceh) / double(kolich_ceh)) * 100;       
 }
     
 bool KC::is_empty_kc() const{
@@ -47,6 +52,22 @@ bool KC::is_empty_kc() const{
     }
 }
 
-void KC::delete_kc(unordered_map <int, KC> &kcmap, int &key){
-    kcmap.erase(key);
+int KC::getID() const{
+    return id;
+}
+
+string KC::getname() const{
+    return name;
+}
+
+bool KC::geteffectivnost() const{
+    return effectivnost;
+}
+
+int KC::get_kcehov() const{
+    return kolich_ceh;
+}
+
+void KC::set_wcehov(int &w){
+    kolich_ceh_v_rabote = w;
 }

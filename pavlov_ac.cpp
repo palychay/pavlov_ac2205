@@ -10,9 +10,8 @@
 
 using namespace std;
 
-
-bool is_empty_file(){
-    ifstream file("data.txt");
+bool is_empty_file(string &s){
+    ifstream file(s);
     return (!file || file.peek() == ifstream::traits_type::eof());
 }
 
@@ -40,76 +39,96 @@ unordered_map <int, Pipe> FindPipesByFilter(const unordered_map<int, Pipe>& pmap
 
 	return result;
 }
-/*
-ofstream& operator << (ofstream &fout, const Pipe &p){
-    fout << "here_pipe\n" << p.kilometr_name << endl <<
-     p.length << endl << p.diametr << endl << p.remont << endl;
-    return fout;
+
+
+template<typename T>
+using Filter1 = bool(*)(const KC &kc, T parametr);
+
+bool CheckByName(const KC &kc, string parametr)
+{
+    return kc.getname().find(parametr) != std::string::npos;
+}
+bool CheckByeffectivnost(const KC &kc, int parametr)
+{
+	return (100 - int(kc.geteffectivnost())) == parametr;
 }
 
-ofstream& operator << (ofstream &fout, const KC &kc){
-    fout << "here_kc\n" << kc.name << endl << kc.kolich_ceh << endl
-     << kc.kolich_ceh_v_rabote << endl << kc.effectivnost << endl;
-    return fout;
+template<typename T>
+unordered_map <int, KC> FindKCsByFilter(const unordered_map<int, KC>& kcmap, Filter1<T> f, T parametr)
+{
+	unordered_map <int, KC> result;
+    for (const auto& [id, kc] : kcmap){
+        if (f(kc, parametr)){
+            result[id] = kc;
+        }
+    }
+
+	return result;
 }
-        
-void save_data(const Pipe &p, const KC &kc)
+     
+void save_data(const Pipe &p, const KC &kc, string &file, unordered_map<int, Pipe> &pmap, unordered_map<int, KC> &kcmap)
 {   
     if (p.is_empty_pipe() && kc.is_empty_kc()){
         cout << "No data to save\n";
         return;
     }
-    if (!is_empty_file())
+    if (!is_empty_file(file))
     {
         cout << "The file is not empty. Are you sure you want to overwrite the data?(yes/no): ";
         string s;
         cin >> s;//!
+        cerr << s << endl;
         if (s == "no")
         {
-            cout << "Select another file to save\n";
+            cout << "Select another file to save: ";
+            string newfile;
+            cin >> newfile;
+            cerr << newfile << endl;
+            ofstream fout(newfile);
+            fout << Pipe::MaxID << endl << KC::MaxID << endl;
+            if (!p.is_empty_pipe())
+                for (auto& [id, p] : pmap)
+                    fout << p;
+            if (!kc.is_empty_kc())
+                for (auto& [id, kc] : kcmap)
+                    fout << kc;
+            fout.close();
             return;
         }
     }
-    ofstream fout("data.txt");
+    ofstream fout(file);
+    fout << Pipe::MaxID << endl << KC::MaxID << endl;
     if (!p.is_empty_pipe())
-        fout << p;
+            for (auto& [id, p] : pmap)
+                fout << p;
     if (!kc.is_empty_kc())
-        fout << kc;
+            for (auto& [id, kc] : kcmap)
+                fout << kc;
     fout.close();
 }
 
-/*
-ifstream& operator >> (ifstream &fin, Pipe &p){
-    fin>>ws;
-    getline(fin, p.kilometr_name);
-    fin >> p.length >> p.diametr >> p.remont;
-    return fin;
-}
-
-ifstream& operator >> (ifstream &fin, KC &kc){
-    fin>>ws;
-    getline(fin, kc.name);
-    fin >> kc.kolich_ceh >> kc.kolich_ceh_v_rabote >> kc.effectivnost;
-    return fin;
-}
-
-void load_data(Pipe &p, KC &kc){
-    if (is_empty_file()){
+void load_data(Pipe &p, KC &kc, string &flnm, unordered_map<int, Pipe> &pmap, unordered_map<int, KC> &kcmap){
+    
+    if (is_empty_file(flnm)){
         cout << "no data\n";
         return;
     }
-
-    ifstream fin("data.txt");
+    
+    ifstream fin(flnm);
+    fin >> Pipe::MaxID >> KC::MaxID;
     string s;
     while (getline(fin, s))
     {
-        if(s == "here_kc")
-            fin >> kc;        
-        else if(s == "here_pipe")
-            fin >> p ;
+        if(s == "here_kc"){
+            fin >> kc;
+            kcmap[kc.getID()] = kc;}      
+        else if(s == "here_pipe"){
+            fin >> p;
+            pmap[p.getID()] = p;}
     }
+    
 }
-*/
+
 void text_menu(){
     cout << "menu\n";
     cout << " 1. add pipe\n";
@@ -166,19 +185,16 @@ void delPipe_byname(unordered_map <int, Pipe> &pmap, string &s){
             delallPipe(pmap);
         }
         else{
-            for (auto& [id, p] : pmap){
-            if (CheckByName(p, s)){
-                pmap.erase(id);
-            }
+            auto it = pmap.begin();
+            while (it != pmap.end()) {
+                if (CheckByName(it->second, s)) {
+                    it = pmap.erase(it);
+                    }
+                else {
+                    ++it;
+                    }
+}   
         }
-        }
-    }
-}
-
-
-void out_kcmap(unordered_map <int, KC> &kcmap){
-    for (const auto& [id, kc] : kcmap){
-        cout << "id: " << id << "\t" << kc;
     }
 }
 
@@ -188,6 +204,63 @@ void out_pmap(unordered_map <int, Pipe> &pmap){
     }
 }
 
+void out_kcmap(unordered_map <int, KC> &kcmap){
+    for (const auto& [id, kc] : kcmap){
+        cout << "id: " << id << "\t" << kc;
+    }
+}
+
+void editKC_byname(unordered_map <int, KC> &kcmap){
+    cout << "name: ";
+    string s;
+    cin >> s;
+    cerr << s << endl;
+    cout << "wceh: ";
+    int wceh;
+    for (auto& [id, kc] : kcmap){
+        if (CheckByName(kc, s)){
+            wceh = get_correct(kc.get_kcehov(), 0);
+            kc.editkc(wceh);
+            kc.set_wcehov(wceh);
+        }
+    }
+}
+
+void delKC_byname(unordered_map <int, KC> &kcmap){
+    if (kcmap.size() == 1){
+        unordered_map <int, KC> newmap;
+        kcmap = newmap;
+        KC::MaxID = 0;
+    }
+    else{
+        int k = 0;
+        cout << "name: ";
+        string s;
+        cin >> s;
+        cerr << s << endl;
+        for (auto& [id, kc] : kcmap){
+            if (CheckByName(kc, s)){
+                k++;
+            }
+        }
+        if (k == kcmap.size()){
+            unordered_map <int, KC> newmap;
+            kcmap = newmap;
+            KC::MaxID = 0;
+        }
+        else{
+            auto it = kcmap.begin();
+            while (it != kcmap.end()) {
+                if (CheckByName(it->second, s)) {
+                    it = kcmap.erase(it);
+                    }
+                else {
+                    ++it;
+                    }
+        }
+    }
+}
+}
 
 int Menu(){
     unordered_map <int, KC> kcmap;
@@ -209,7 +282,7 @@ int Menu(){
 
         case 2:
             kc.add_new_kc();
-            kcmap[kc.id] = kc;
+            kcmap[kc.getID()] = kc;
             break;
 
         case 3:
@@ -256,6 +329,7 @@ int Menu(){
                         cout << "name: ";
                         string s;
                         cin >> s;
+                        cerr << s << endl;
                         editPipe_byname(pmap, s);
                     }
                     else{
@@ -269,6 +343,7 @@ int Menu(){
                         cout << "name: ";
                         string s;
                         cin >> s;
+                        cerr << s << endl;
                         delPipe_byname(pmap, s);
                     }
                     else{
@@ -283,7 +358,15 @@ int Menu(){
 
         case 5:
             if (!(kc.is_empty_kc())){
-                kc.editkc(kcmap);
+                cout << "Edit-0 or delete-1: ";
+                int i;
+                i = get_correct(1, 0);
+                if (i == 0){
+                    editKC_byname(kcmap);
+                    }
+                else{
+                    delKC_byname(kcmap);
+                }
             }
             else{
                 cout << "There is no such object\n" << endl;
@@ -291,11 +374,22 @@ int Menu(){
             break;
 
         case 6:
-            //save_data(p, kc);
+            {cout << "select save-file:";
+            string file;
+            cin >> file;
+            cerr << file << endl;
+            save_data(p, kc, file, pmap, kcmap);}
             break;
 
         case 7:
-            /*load_data(p, kc);*/
+            {
+                string flnm;
+                cout << "input: ";
+                cin >> flnm;
+                cerr << flnm << endl;
+                load_data(p, kc, flnm, pmap, kcmap);
+            }
+            /*load_data(p, kc,);*/
             break;
 
         case 8:

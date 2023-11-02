@@ -10,6 +10,20 @@ ostream& operator << (ostream &out, const Pipe &p){
     return out;
 }
 
+ofstream& operator << (ofstream &fout, const Pipe &p){
+    fout << "here_pipe\n" << p.id << endl << p.kilometr_name << endl <<
+     p.length << endl << p.diametr << endl << p.remont << endl;
+    return fout;
+}
+
+ifstream& operator >> (ifstream &fin, Pipe &p){
+    fin >> p.id;
+    fin>>ws;
+    getline(fin, p.kilometr_name);
+    fin >> p.length >> p.diametr >> p.remont;
+    return fin;
+}
+
 void Pipe::new_pipe()
 {
     id = ++MaxID;
@@ -26,26 +40,10 @@ void Pipe::new_pipe()
     cout << endl;
 }
 
-void Pipe::Print_Pipe() const
-{
-    cout << "Your pipe:\n";
-        cout << "Kilometer mark: ";
-        cout << kilometr_name << endl;
-        cout << "Length (in kilometers): ";
-        cout << length << endl;
-        cout << "Pipe diameter (in millimeters): ";
-        cout << diametr << endl;
-        cout << "A sign in repair(0 - no, 1 - yes): ";
-        cout << remont << endl;
-        cout << endl;
-}
-
 void Pipe::editpipe(){
     remont = !remont;
     cout << endl;
 }
-
-
 
 bool Pipe::is_empty_pipe() const{
     if (MaxID == 0){
