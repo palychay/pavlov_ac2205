@@ -31,6 +31,7 @@ void KC::add_new_kc(){
     cout << "name: ";
     cin >> ws;
     getline(cin, name);
+    cerr << name << endl;
     cout << "number of workshops: ";
     kolich_ceh = get_correct(1500, 0);
     cout << "The number of working workshops.(An error may occur if there are more of them than the total number of workshops.): ";

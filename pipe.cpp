@@ -31,6 +31,7 @@ void Pipe::new_pipe()
     cout << "Kilometer mark: ";
     cin >> ws;
     getline(cin, kilometr_name);
+    cerr << kilometr_name << endl;
     cout << "Length(km): ";
     length = get_correct(1500., 0.);
     cout << "Pipe Diameter(mm): ";
@@ -45,7 +46,7 @@ void Pipe::editpipe(){
     cout << endl;
 }
 
-bool Pipe::is_empty_pipe() const{
+ bool Pipe::is_empty_pipe() {
     if (MaxID == 0){
         return true;
     }

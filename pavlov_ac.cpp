@@ -2,6 +2,7 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <unordered_set>
 #include "correct_input.h"
 #include "pipe.h"
 #include "kc.h"
@@ -10,7 +11,7 @@
 
 using namespace std;
 
-bool is_empty_file(string &s){
+bool is_empty_file(const string &s){
     ifstream file(s);
     return (!file || file.peek() == ifstream::traits_type::eof());
 }
@@ -28,12 +29,12 @@ bool CheckByRepair(const Pipe &p, bool parametr)
 }
 
 template<typename T>
-unordered_map <int, Pipe> FindPipesByFilter(const unordered_map<int, Pipe>& pmap, Filter<T> f, T parametr)
+unordered_set <int> FindPipesByFilter(const unordered_map<int, Pipe>& pmap, Filter<T> f, T parametr)
 {
-	unordered_map <int, Pipe> result;
+	unordered_set <int> result;
     for (const auto& [id, p] : pmap){
         if (f(p, parametr)){
-            result[id] = p;
+            result.insert(id);
         }
     }
 
@@ -66,42 +67,33 @@ unordered_map <int, KC> FindKCsByFilter(const unordered_map<int, KC>& kcmap, Fil
 	return result;
 }
      
-void save_data(const Pipe &p, const KC &kc, string &file, unordered_map<int, Pipe> &pmap, unordered_map<int, KC> &kcmap)
+void save_data(const unordered_map<int, Pipe> &pmap,const unordered_map<int, KC> &kcmap)
 {   
-    if (p.is_empty_pipe() && kc.is_empty_kc()){
+    string file;
+    if (Pipe::is_empty_pipe() && kcmap.size()){
         cout << "No data to save\n";
         return;
-    }
-    if (!is_empty_file(file))
+    } 
+    cin >> file;
+    cerr << file << endl;
+           
+    while (!is_empty_file(file))
     {
         cout << "The file is not empty. Are you sure you want to overwrite the data?(yes/no): ";
         string s;
         cin >> s;//!
         cerr << s << endl;
-        if (s == "no")
-        {
-            cout << "Select another file to save: ";
-            string newfile;
-            cin >> newfile;
-            cerr << newfile << endl;
-            ofstream fout(newfile);
-            fout << Pipe::MaxID << endl << KC::MaxID << endl;
-            if (!p.is_empty_pipe())
-                for (auto& [id, p] : pmap)
-                    fout << p;
-            if (!kc.is_empty_kc())
-                for (auto& [id, kc] : kcmap)
-                    fout << kc;
-            fout.close();
-            return;
-        }
+        if (s == "yes")
+            break;
+        //COUT
+        cin >> file;
+        cerr << file << endl;
+
     }
     ofstream fout(file);
     fout << Pipe::MaxID << endl << KC::MaxID << endl;
-    if (!p.is_empty_pipe())
             for (auto& [id, p] : pmap)
                 fout << p;
-    if (!kc.is_empty_kc())
             for (auto& [id, kc] : kcmap)
                 fout << kc;
     fout.close();
@@ -227,46 +219,31 @@ void editKC_byname(unordered_map <int, KC> &kcmap){
 }
 
 void delKC_byname(unordered_map <int, KC> &kcmap){
-    if (kcmap.size() == 1){
-        unordered_map <int, KC> newmap;
-        kcmap = newmap;
+ /*   if (kcmap.size() == 1){
+        kcmap.clear();
         KC::MaxID = 0;
+        return;
     }
-    else{
-        int k = 0;
+*/
         cout << "name: ";
         string s;
         cin >> s;
         cerr << s << endl;
+        unordered_set<int> res;
         for (auto& [id, kc] : kcmap){
             if (CheckByName(kc, s)){
-                k++;
+                res.insert(id);
             }
         }
-        if (k == kcmap.size()){
-            unordered_map <int, KC> newmap;
-            kcmap = newmap;
-            KC::MaxID = 0;
-        }
-        else{
-            auto it = kcmap.begin();
-            while (it != kcmap.end()) {
-                if (CheckByName(it->second, s)) {
-                    it = kcmap.erase(it);
-                    }
-                else {
-                    ++it;
-                    }
-        }
-    }
+        //return res;
+//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        for (int id: res)
+            kcmap.erase(id);
+        
 }
-}
-
 int Menu(){
     unordered_map <int, KC> kcmap;
     unordered_map <int, Pipe> pmap;
-    Pipe p;
-    KC kc;
     while (true){
         text_menu();
         int choice;
@@ -276,9 +253,12 @@ int Menu(){
         switch (choice)
         {
         case 1:
+        {
+            Pipe p;
             p.new_pipe();
             pmap[p.getID()] = p;
             break;
+        }
 
         case 2:
             kc.add_new_kc();
@@ -286,7 +266,7 @@ int Menu(){
             break;
 
         case 3:
-            if (p.is_empty_pipe() == false && kc.is_empty_kc() == true){
+            if (pmap.size() == 0 && kc.is_empty_kc() == true){
                 cout << "Yours pipes:\n";
                 out_pmap(pmap);
                 cout << "kc - no!\n" << endl;
@@ -387,9 +367,8 @@ int Menu(){
                 cout << "input: ";
                 cin >> flnm;
                 cerr << flnm << endl;
-                load_data(p, kc, flnm, pmap, kcmap);
+                load_data(flnm, pmap, kcmap);
             }
-            /*load_data(p, kc,);*/
             break;
 
         case 8:
