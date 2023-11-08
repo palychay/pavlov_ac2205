@@ -37,7 +37,6 @@ unordered_set <int> FindPipesByFilter(const unordered_map<int, Pipe>& pmap, Filt
             result.insert(id);
         }
     }
-
 	return result;
 }
 
@@ -55,39 +54,36 @@ bool CheckByeffectivnost(const KC &kc, int parametr)
 }
 
 template<typename T>
-unordered_map <int, KC> FindKCsByFilter(const unordered_map<int, KC>& kcmap, Filter1<T> f, T parametr)
+unordered_set <int> FindKCsByFilter(const unordered_map<int, KC>& kcmap, Filter1<T> f, T parametr)
 {
-	unordered_map <int, KC> result;
+	unordered_set <int> result;
     for (const auto& [id, kc] : kcmap){
         if (f(kc, parametr)){
-            result[id] = kc;
+            result.insert(id);
         }
     }
-
 	return result;
 }
-     
-void save_data(const unordered_map<int, Pipe> &pmap,const unordered_map<int, KC> &kcmap)
+
+
+void save_data(const unordered_map<int, Pipe> &pmap, const unordered_map<int, KC> &kcmap)
 {   
-    string file;
-    if (Pipe::is_empty_pipe() && kcmap.size()){
+    if (pmap.size() == 0 and kcmap.size() == 0){
         cout << "No data to save\n";
         return;
     } 
-    cin >> file;
-    cerr << file << endl;
-           
+    string file;
+    cout << "input: ";
+    INPUT_LINE(cin, file); 
     while (!is_empty_file(file))
     {
         cout << "The file is not empty. Are you sure you want to overwrite the data?(yes/no): ";
         string s;
-        cin >> s;//!
-        cerr << s << endl;
+        INPUT_LINE(cin, s);
         if (s == "yes")
             break;
-        //COUT
-        cin >> file;
-        cerr << file << endl;
+        cout << "input: ";
+        INPUT_LINE(cin, file);
 
     }
     ofstream fout(file);
@@ -99,27 +95,30 @@ void save_data(const unordered_map<int, Pipe> &pmap,const unordered_map<int, KC>
     fout.close();
 }
 
-void load_data(Pipe &p, KC &kc, string &flnm, unordered_map<int, Pipe> &pmap, unordered_map<int, KC> &kcmap){
-    
+void load_data(unordered_map<int, Pipe> &pmap, unordered_map<int, KC> &kcmap){
+    string flnm;
+    cout << "input: ";
+    INPUT_LINE(cin, flnm);
     if (is_empty_file(flnm)){
         cout << "no data\n";
         return;
     }
-    
     ifstream fin(flnm);
     fin >> Pipe::MaxID >> KC::MaxID;
     string s;
     while (getline(fin, s))
     {
         if(s == "here_kc"){
+            KC kc;
             fin >> kc;
             kcmap[kc.getID()] = kc;}      
         else if(s == "here_pipe"){
+            Pipe p;
             fin >> p;
             pmap[p.getID()] = p;}
-    }
-    
+    } 
 }
+
 
 void text_menu(){
     cout << "menu\n";
@@ -134,13 +133,17 @@ void text_menu(){
     cout << endl;
 }
 
+
 void editAllpipe(unordered_map <int, Pipe> &pmap){
      for (auto& [id, p] : pmap){
         p.editpipe();
      }
 }
 
-void editPipe_byname(unordered_map <int, Pipe> &pmap, string &s){
+void editPipe_byname(unordered_map <int, Pipe> &pmap){
+    cout << "input: ";
+    string s;
+    INPUT_LINE(cin, s);
     for (auto& [id, p] : pmap){
         if (CheckByName(p, s)){
             p.editpipe();
@@ -148,7 +151,10 @@ void editPipe_byname(unordered_map <int, Pipe> &pmap, string &s){
     }
 }
 
-void editPipe_byrepair(unordered_map <int, Pipe> &pmap, bool &b){
+void editPipe_byrepair(unordered_map <int, Pipe> &pmap){
+    cout << "repair(0 - no or 1 - yes): ";
+    bool b;
+    b = get_correct(1, 0);
     for (auto& [id, p] : pmap){
         if (CheckByRepair(p, b)){
             p.editpipe();
@@ -156,37 +162,45 @@ void editPipe_byrepair(unordered_map <int, Pipe> &pmap, bool &b){
     }
 }
 
-void delallPipe(unordered_map <int, Pipe> &pmap){
-    unordered_map <int, Pipe> newmap;
-    pmap = newmap;
-    Pipe::MaxID = 0;
+void editPipeINcase4(unordered_map <int, Pipe> &pmap){
+    cout << "Edit all pipes-0 or by filter name-1 or by filter repair-2: ";
+    int j;
+    j = get_correct(2, 0);
+    if (j == 2){
+        editPipe_byrepair(pmap);
+        }
+    else if (j == 1){
+        editPipe_byname(pmap);
+        }
+    else{
+        editAllpipe(pmap);
+        }
 }
 
-void delPipe_byname(unordered_map <int, Pipe> &pmap, string &s){
-    if (pmap.size() == 1){
-        delallPipe(pmap);
+
+
+void delallPipe(unordered_map <int, Pipe> &pmap){
+    pmap.clear();
+}
+
+void delPipe_byname(unordered_map <int, Pipe> &pmap){
+    cout << "name: ";
+    string s;
+    INPUT_LINE(cin, s);
+    for (int id: FindPipesByFilter(pmap, CheckByName, s)){
+        pmap.erase(id);
+    }
+}
+
+void delPipeINcase4(unordered_map <int, Pipe> &pmap){
+    cout << "Delete all pipes-0 or by filter name-1: ";
+    int l;
+    l = get_correct(1, 0);
+    if (l == 1){
+        delPipe_byname(pmap);
     }
     else{
-        int k = 0;
-        for (auto& [id, p] : pmap){
-            if (CheckByName(p, s)){
-                k++;
-            }
-        }
-        if (k == pmap.size()){
-            delallPipe(pmap);
-        }
-        else{
-            auto it = pmap.begin();
-            while (it != pmap.end()) {
-                if (CheckByName(it->second, s)) {
-                    it = pmap.erase(it);
-                    }
-                else {
-                    ++it;
-                    }
-}   
-        }
+        delallPipe(pmap);
     }
 }
 
@@ -195,6 +209,7 @@ void out_pmap(unordered_map <int, Pipe> &pmap){
         cout << "id: " << id << "\t" << p;
     }
 }
+
 
 void out_kcmap(unordered_map <int, KC> &kcmap){
     for (const auto& [id, kc] : kcmap){
@@ -205,8 +220,7 @@ void out_kcmap(unordered_map <int, KC> &kcmap){
 void editKC_byname(unordered_map <int, KC> &kcmap){
     cout << "name: ";
     string s;
-    cin >> s;
-    cerr << s << endl;
+    INPUT_LINE(cin, s);
     cout << "wceh: ";
     int wceh;
     for (auto& [id, kc] : kcmap){
@@ -219,28 +233,14 @@ void editKC_byname(unordered_map <int, KC> &kcmap){
 }
 
 void delKC_byname(unordered_map <int, KC> &kcmap){
- /*   if (kcmap.size() == 1){
-        kcmap.clear();
-        KC::MaxID = 0;
-        return;
-    }
-*/
         cout << "name: ";
         string s;
-        cin >> s;
-        cerr << s << endl;
-        unordered_set<int> res;
-        for (auto& [id, kc] : kcmap){
-            if (CheckByName(kc, s)){
-                res.insert(id);
-            }
-        }
-        //return res;
-//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        for (int id: res)
+        INPUT_LINE(cin, s);
+        for (int id: FindKCsByFilter(kcmap, CheckByName, s))
             kcmap.erase(id);
         
 }
+
 int Menu(){
     unordered_map <int, KC> kcmap;
     unordered_map <int, Pipe> pmap;
@@ -261,24 +261,26 @@ int Menu(){
         }
 
         case 2:
+        {
+            KC kc;
             kc.add_new_kc();
             kcmap[kc.getID()] = kc;
             break;
-
+        }
         case 3:
-            if (pmap.size() == 0 && kc.is_empty_kc() == true){
+            if (pmap.size() != 0 && kcmap.size() == 0){
                 cout << "Yours pipes:\n";
                 out_pmap(pmap);
                 cout << "kc - no!\n" << endl;
                 cout << endl;
             }
-            else if (p.is_empty_pipe() == true && kc.is_empty_kc() == false){
+            else if (pmap.size() == 0 && kcmap.size() != 0){
                 cout << "Yours kcs:\n";
                 out_kcmap(kcmap);
                 cout << "pipe - no!\n" << endl;
                 cout << endl;
             }
-            else if (p.is_empty_pipe() == true && kc.is_empty_kc() == true){
+            else if (pmap.size() == 0 && kcmap.size() == 0){
                 cout << "objects no!\n" << endl;
             }
             else{
@@ -292,43 +294,15 @@ int Menu(){
             break;
 
         case 4:
-            if (!(p.is_empty_pipe())){
+            if (pmap.size() != 0){
                 cout << "Edit-0 or delete-1: ";
                 int i;
                 i = get_correct(1, 0);
                 if (i == 0){
-                    cout << "Edit all pipes-0 or by filter name-1 or by filter repair-2: ";
-                    i = get_correct(2, 0);
-                    if (i == 2){
-                        cout << "repair(0 - no or 1 - yes): ";
-                        bool b;
-                        b = get_correct(1, 0);
-                        editPipe_byrepair(pmap, b);
-                    }
-                    else if (i == 1){
-                        cout << "name: ";
-                        string s;
-                        cin >> s;
-                        cerr << s << endl;
-                        editPipe_byname(pmap, s);
-                    }
-                    else{
-                        editAllpipe(pmap);
-                    }
+                    editPipeINcase4(pmap);
                 }
                 else{
-                    cout << "Delete all pipes-0 or by filter name-1: ";
-                    i = get_correct(1, 0);
-                    if (i == 1){
-                        cout << "name: ";
-                        string s;
-                        cin >> s;
-                        cerr << s << endl;
-                        delPipe_byname(pmap, s);
-                    }
-                    else{
-                        delallPipe(pmap);
-                    }
+                    delPipeINcase4(pmap);
                 }
             }
             else{
@@ -337,7 +311,7 @@ int Menu(){
             break;
 
         case 5:
-            if (!(kc.is_empty_kc())){
+            if (kcmap.size() != 0){
                 cout << "Edit-0 or delete-1: ";
                 int i;
                 i = get_correct(1, 0);
@@ -354,21 +328,11 @@ int Menu(){
             break;
 
         case 6:
-            {cout << "select save-file:";
-            string file;
-            cin >> file;
-            cerr << file << endl;
-            save_data(p, kc, file, pmap, kcmap);}
+            save_data(pmap, kcmap);
             break;
 
         case 7:
-            {
-                string flnm;
-                cout << "input: ";
-                cin >> flnm;
-                cerr << flnm << endl;
-                load_data(flnm, pmap, kcmap);
-            }
+            load_data(pmap, kcmap);
             break;
 
         case 8:

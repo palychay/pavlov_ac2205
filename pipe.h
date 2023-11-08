@@ -25,7 +25,6 @@ public:
     void new_pipe();
     void editpipe();
     
-    static bool is_empty_pipe();
 
     friend std::ostream& operator << (std::ostream& out, const Pipe &p);
     friend std::ofstream& operator << (std::ofstream& fout, const Pipe &p);

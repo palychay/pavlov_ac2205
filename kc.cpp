@@ -29,9 +29,7 @@ void KC::add_new_kc(){
     id = ++MaxID;
     cout << "new kc\n";
     cout << "name: ";
-    cin >> ws;
-    getline(cin, name);
-    cerr << name << endl;
+    INPUT_LINE(cin, name);
     cout << "number of workshops: ";
     kolich_ceh = get_correct(1500, 0);
     cout << "The number of working workshops.(An error may occur if there are more of them than the total number of workshops.): ";
@@ -42,15 +40,6 @@ void KC::add_new_kc(){
 
 void KC::editkc(int &wceh){
     effectivnost = (double(wceh) / double(kolich_ceh)) * 100;       
-}
-    
-bool KC::is_empty_kc() const{
-    if (MaxID == 0){
-        return true;
-    }
-    else{
-        return false;
-    }
 }
 
 int KC::getID() const{

@@ -26,7 +26,6 @@ public:
     void add_new_kc();
     void editkc(int &ceh);
 
-    bool is_empty_kc() const;
 
     friend std::ofstream& operator << (std::ofstream& fout, const KC &kc);
     friend std::ostream& operator << (std::ostream& out, const KC &kc);

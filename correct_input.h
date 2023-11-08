@@ -1,6 +1,9 @@
 #include <iostream>
 #include <fstream>
 
+#define INPUT_LINE(in, str) getline(in>>std::ws, str); \
+						std::cerr << str << std::endl
+
 class redirect_output_wrapper
 {
     std::ostream& stream;
