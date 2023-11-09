@@ -8,6 +8,7 @@ using namespace std;
 class KC{
 private:
     int id;
+    static int MaxID;
     /*основные параметры станции*/
     string name;
     int kolich_ceh;
@@ -15,8 +16,8 @@ private:
     double effectivnost;
 
 public:
-    static int MaxID;
-
+    static int getMaxID(){return MaxID;};
+    static void setMaxId(int &kcid){MaxID = kcid;};
     int getID() const;
     string getname() const;
     bool geteffectivnost() const;

@@ -87,7 +87,7 @@ void save_data(const unordered_map<int, Pipe> &pmap, const unordered_map<int, KC
 
     }
     ofstream fout(file);
-    fout << Pipe::MaxID << endl << KC::MaxID << endl;
+    fout << Pipe::getMaxID() << endl << KC::getMaxID() << endl;
             for (auto& [id, p] : pmap)
                 fout << p;
             for (auto& [id, kc] : kcmap)
@@ -103,8 +103,11 @@ void load_data(unordered_map<int, Pipe> &pmap, unordered_map<int, KC> &kcmap){
         cout << "no data\n";
         return;
     }
+    int pid, kcid;
     ifstream fin(flnm);
-    fin >> Pipe::MaxID >> KC::MaxID;
+    fin >> pid >> kcid;
+    Pipe::setMaxId(pid);
+    KC::setMaxId(kcid);
     string s;
     while (getline(fin, s))
     {
