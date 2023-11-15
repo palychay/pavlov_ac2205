@@ -4,17 +4,15 @@
 #include <vector>
 #include <unordered_set>
 #include "correct_input.h"
-#include "pipe.h"
-#include "kc.h"
-#include <unordered_map>
 
+#include <unordered_map>
+#include <chrono>
+#include <format>
+#include "friendclass.h"
 
 using namespace std;
+using namespace chrono;
 
-bool is_empty_file(const string &s){
-    ifstream file(s);
-    return (!file || file.peek() == ifstream::traits_type::eof());
-}
 
 template<typename T>
 using Filter = bool(*)(const Pipe &p, T parametr);
@@ -66,63 +64,6 @@ unordered_set <int> FindKCsByFilter(const unordered_map<int, KC>& kcmap, Filter1
 }
 
 
-void save_data(const unordered_map<int, Pipe> &pmap, const unordered_map<int, KC> &kcmap)
-{   
-    if (pmap.size() == 0 and kcmap.size() == 0){
-        cout << "No data to save\n";
-        return;
-    } 
-    string file;
-    cout << "input: ";
-    INPUT_LINE(cin, file); 
-    while (!is_empty_file(file))
-    {
-        cout << "The file is not empty. Are you sure you want to overwrite the data?(yes/no): ";
-        string s;
-        INPUT_LINE(cin, s);
-        if (s == "yes")
-            break;
-        cout << "input: ";
-        INPUT_LINE(cin, file);
-
-    }
-    ofstream fout(file);
-    fout << Pipe::getMaxID() << endl << KC::getMaxID() << endl;
-            for (auto& [id, p] : pmap)
-                fout << p;
-            for (auto& [id, kc] : kcmap)
-                fout << kc;
-    fout.close();
-}
-
-void load_data(unordered_map<int, Pipe> &pmap, unordered_map<int, KC> &kcmap){
-    string flnm;
-    cout << "input: ";
-    INPUT_LINE(cin, flnm);
-    if (is_empty_file(flnm)){
-        cout << "no data\n";
-        return;
-    }
-    int pid, kcid;
-    ifstream fin(flnm);
-    fin >> pid >> kcid;
-    Pipe::setMaxId(pid);
-    KC::setMaxId(kcid);
-    string s;
-    while (getline(fin, s))
-    {
-        if(s == "here_kc"){
-            KC kc;
-            fin >> kc;
-            kcmap[kc.getID()] = kc;}      
-        else if(s == "here_pipe"){
-            Pipe p;
-            fin >> p;
-            pmap[p.getID()] = p;}
-    } 
-}
-
-
 void text_menu(){
     cout << "menu\n";
     cout << " 1. add pipe\n";
@@ -136,6 +77,30 @@ void text_menu(){
     cout << endl;
 }
 
+void choicePipeEdit(unordered_map<int, Pipe>& pmap, const unordered_set <int>& f){
+    int sk = f.size();
+    if (sk){
+        unordered_set <int> yourchoice;
+        cout << "input size:";
+        int ssze = get_correct(2100, 1);
+        cout << "choice id for edit\n";
+        while (ssze){
+            ssze--;
+            int sid = get_correct(sk, 1);
+            if (f.count(sid)){
+                yourchoice.insert(sid);
+            }
+        }
+        for (auto& [id, p] : pmap){
+            if (yourchoice.count(id)){
+                p.editpipe();
+            }
+        }
+    }
+    else
+        return;
+}
+
 
 void editAllpipe(unordered_map <int, Pipe> &pmap){
      for (auto& [id, p] : pmap){
@@ -147,22 +112,20 @@ void editPipe_byname(unordered_map <int, Pipe> &pmap){
     cout << "input: ";
     string s;
     INPUT_LINE(cin, s);
-    for (auto& [id, p] : pmap){
-        if (CheckByName(p, s)){
-            p.editpipe();
-        }
+    for (int t: FindPipesByFilter(pmap, CheckByName, s)){
+        cout << "id: " << t << endl;
     }
+    choicePipeEdit(pmap, FindPipesByFilter(pmap, CheckByName, s));
 }
 
 void editPipe_byrepair(unordered_map <int, Pipe> &pmap){
     cout << "repair(0 - no or 1 - yes): ";
     bool b;
     b = get_correct(1, 0);
-    for (auto& [id, p] : pmap){
-        if (CheckByRepair(p, b)){
-            p.editpipe();
-        }
+    for (int t: FindPipesByFilter(pmap, CheckByRepair, b)){
+        cout << "id: " << t << endl;
     }
+    choicePipeEdit(pmap, FindPipesByFilter(pmap, CheckByRepair, b));
 }
 
 void editPipeINcase4(unordered_map <int, Pipe> &pmap){
@@ -181,6 +144,27 @@ void editPipeINcase4(unordered_map <int, Pipe> &pmap){
 }
 
 
+void choicePipeDel(unordered_map<int, Pipe>& pmap, const unordered_set <int>& f){
+    int sk = f.size();
+    if (sk) {
+        unordered_set <int> yourchoice;
+        cout << "input size:";
+        int ssze = get_correct(sk, 1);
+        cout << "choice id for edit\n";
+        while (ssze){
+            ssze--;
+            int sid = get_correct(2100, 1);
+            if (f.count(sid)){
+                yourchoice.insert(sid);
+            }
+        }
+        for (int x: yourchoice){
+            pmap.erase(x);
+        }
+    }
+    else
+        return;
+}
 
 void delallPipe(unordered_map <int, Pipe> &pmap){
     pmap.clear();
@@ -190,9 +174,10 @@ void delPipe_byname(unordered_map <int, Pipe> &pmap){
     cout << "name: ";
     string s;
     INPUT_LINE(cin, s);
-    for (int id: FindPipesByFilter(pmap, CheckByName, s)){
-        pmap.erase(id);
+    for (int t: FindPipesByFilter(pmap, CheckByName, s)){
+        cout << "id: " << t << endl;
     }
+    choicePipeDel(pmap, FindPipesByFilter(pmap, CheckByName, s));
 }
 
 void delPipeINcase4(unordered_map <int, Pipe> &pmap){
@@ -224,10 +209,10 @@ void editKC_byname(unordered_map <int, KC> &kcmap){
     cout << "name: ";
     string s;
     INPUT_LINE(cin, s);
-    cout << "wceh: ";
     int wceh;
     for (auto& [id, kc] : kcmap){
         if (CheckByName(kc, s)){
+            cout << "wceh: ";
             wceh = get_correct(kc.get_kcehov(), 0);
             kc.editkc(wceh);
             kc.set_wcehov(wceh);
@@ -331,11 +316,12 @@ int Menu(){
             break;
 
         case 6:
-            save_data(pmap, kcmap);
+            PipeAndKC pkc;
+            pkc.save_data(pmap, kcmap);
             break;
 
         case 7:
-            load_data(pmap, kcmap);
+            pkc.load_data(pmap, kcmap);
             break;
 
         case 8:

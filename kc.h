@@ -16,8 +16,7 @@ private:
     double effectivnost;
 
 public:
-    static int getMaxID(){return MaxID;};
-    static void setMaxId(int &kcid){MaxID = kcid;};
+
     int getID() const;
     string getname() const;
     bool geteffectivnost() const;
@@ -27,6 +26,7 @@ public:
     void add_new_kc();
     void editkc(int &ceh);
 
+    friend class PipeAndKC;
 
     friend std::ofstream& operator << (std::ofstream& fout, const KC &kc);
     friend std::ostream& operator << (std::ostream& out, const KC &kc);
