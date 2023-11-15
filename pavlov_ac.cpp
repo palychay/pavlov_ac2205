@@ -77,7 +77,7 @@ void text_menu(){
     cout << endl;
 }
 
-void choicePipeEdit(unordered_map<int, Pipe>& pmap, const unordered_set <int>& f){
+void choiceEdit(unordered_map<int, Pipe>& pmap, const unordered_set <int>& f){
     int sk = f.size();
     if (sk){
         unordered_set <int> yourchoice;
@@ -115,7 +115,7 @@ void editPipe_byname(unordered_map <int, Pipe> &pmap){
     for (int t: FindPipesByFilter(pmap, CheckByName, s)){
         cout << "id: " << t << endl;
     }
-    choicePipeEdit(pmap, FindPipesByFilter(pmap, CheckByName, s));
+    choiceEdit(pmap, FindPipesByFilter(pmap, CheckByName, s));
 }
 
 void editPipe_byrepair(unordered_map <int, Pipe> &pmap){
@@ -125,7 +125,7 @@ void editPipe_byrepair(unordered_map <int, Pipe> &pmap){
     for (int t: FindPipesByFilter(pmap, CheckByRepair, b)){
         cout << "id: " << t << endl;
     }
-    choicePipeEdit(pmap, FindPipesByFilter(pmap, CheckByRepair, b));
+    choiceEdit(pmap, FindPipesByFilter(pmap, CheckByRepair, b));
 }
 
 void editPipeINcase4(unordered_map <int, Pipe> &pmap){
@@ -143,8 +143,7 @@ void editPipeINcase4(unordered_map <int, Pipe> &pmap){
         }
 }
 
-
-void choicePipeDel(unordered_map<int, Pipe>& pmap, const unordered_set <int>& f){
+void choiceDel(unordered_map<int, Pipe>& pmap, const unordered_set <int>& f){
     int sk = f.size();
     if (sk) {
         unordered_set <int> yourchoice;
@@ -177,7 +176,7 @@ void delPipe_byname(unordered_map <int, Pipe> &pmap){
     for (int t: FindPipesByFilter(pmap, CheckByName, s)){
         cout << "id: " << t << endl;
     }
-    choicePipeDel(pmap, FindPipesByFilter(pmap, CheckByName, s));
+    choiceDel(pmap, FindPipesByFilter(pmap, CheckByName, s));
 }
 
 void delPipeINcase4(unordered_map <int, Pipe> &pmap){
@@ -205,28 +204,74 @@ void out_kcmap(unordered_map <int, KC> &kcmap){
     }
 }
 
+void choiceEdit(unordered_map<int, KC>& kcmap, const unordered_set <int>& f){
+    int sk = f.size();
+    if (sk){
+        unordered_set <int> yourchoice;
+        cout << "input size:";
+        int ssze = get_correct(2100, 1);
+        cout << "choice id for edit\n";
+        while (ssze){
+            ssze--;
+            int sid = get_correct(sk, 1);
+            if (f.count(sid)){
+                yourchoice.insert(sid);
+            }
+        }
+        int wceh;
+        for (auto& [id, kc] : kcmap){
+            if (yourchoice.count(id)){
+                cout << "wceh: ";
+                wceh = get_correct(kc.get_kcehov(), 0);
+                kc.editkc(wceh);
+                kc.set_wcehov(wceh);
+            }
+        }
+    }
+    else
+        return;
+}
+
 void editKC_byname(unordered_map <int, KC> &kcmap){
     cout << "name: ";
     string s;
     INPUT_LINE(cin, s);
-    int wceh;
-    for (auto& [id, kc] : kcmap){
-        if (CheckByName(kc, s)){
-            cout << "wceh: ";
-            wceh = get_correct(kc.get_kcehov(), 0);
-            kc.editkc(wceh);
-            kc.set_wcehov(wceh);
+    for (int t: FindKCsByFilter(kcmap, CheckByName, s)){
+        cout << "id: " << t << endl;
+    }
+    choiceEdit(kcmap, FindKCsByFilter(kcmap, CheckByName, s));
+}
+
+void choiceDel(unordered_map<int, KC>& kcmap, const unordered_set <int>& f){
+    int sk = f.size();
+    if (sk) {
+        unordered_set <int> yourchoice;
+        cout << "input size:";
+        int ssze = get_correct(sk, 1);
+        cout << "choice id for edit\n";
+        while (ssze){
+            ssze--;
+            int sid = get_correct(2100, 1);
+            if (f.count(sid)){
+                yourchoice.insert(sid);
+            }
+        }
+        for (int x: yourchoice){
+            kcmap.erase(x);
         }
     }
+    else
+        return;
 }
 
 void delKC_byname(unordered_map <int, KC> &kcmap){
-        cout << "name: ";
-        string s;
-        INPUT_LINE(cin, s);
-        for (int id: FindKCsByFilter(kcmap, CheckByName, s))
-            kcmap.erase(id);
-        
+    cout << "name: ";
+    string s;
+    INPUT_LINE(cin, s);
+    for (int t: FindKCsByFilter(kcmap, CheckByName, s)){
+        cout << "id: " << t << endl;
+    }
+    choiceDel(kcmap, FindKCsByFilter(kcmap, CheckByName, s));    
 }
 
 int Menu(){
