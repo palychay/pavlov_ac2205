@@ -38,8 +38,8 @@ void KC::add_new_kc(){
     cout << endl;
 }
 
-void KC::editkc(int &wceh){
-    effectivnost = (double(wceh) / double(kolich_ceh)) * 100;       
+double KC::getLoad() const{
+    return (double(kolich_ceh_v_rabote) / double(kolich_ceh)) * 100;       
 }
 
 int KC::getID() const{
@@ -58,6 +58,6 @@ int KC::get_kcehov() const{
     return kolich_ceh;
 }
 
-void KC::set_wcehov(int &w){
+void KC::set_wcehov(int w){
     kolich_ceh_v_rabote = w;
 }

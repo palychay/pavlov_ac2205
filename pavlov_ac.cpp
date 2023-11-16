@@ -46,9 +46,9 @@ bool CheckByName(const KC &kc, string parametr)
 {
     return kc.getname().find(parametr) != std::string::npos;
 }
-bool CheckByeffectivnost(const KC &kc, int parametr)
+bool CheckByLoad(const KC &kc, int parametr)
 {
-	return (100 - int(kc.geteffectivnost())) == parametr;
+	return (100 - int(kc.getLoad())) == parametr;
 }
 
 template<typename T>
@@ -81,12 +81,12 @@ void choiceEdit(unordered_map<int, Pipe>& pmap, const unordered_set <int>& f){
     int sk = f.size();
     if (sk){
         unordered_set <int> yourchoice;
-        cout << "input size:";
-        int ssze = get_correct(2100, 1);
+        cout << "input kolichestvo:";
+        int ssze = get_correct(sk, 1);
         cout << "choice id for edit\n";
         while (ssze){
             ssze--;
-            int sid = get_correct(sk, 1);
+            int sid = get_correct(2100, 1);
             if (f.count(sid)){
                 yourchoice.insert(sid);
             }
@@ -147,7 +147,7 @@ void choiceDel(unordered_map<int, Pipe>& pmap, const unordered_set <int>& f){
     int sk = f.size();
     if (sk) {
         unordered_set <int> yourchoice;
-        cout << "input size:";
+        cout << "input kolichestvo:";
         int ssze = get_correct(sk, 1);
         cout << "choice id for edit\n";
         while (ssze){
@@ -208,12 +208,12 @@ void choiceEdit(unordered_map<int, KC>& kcmap, const unordered_set <int>& f){
     int sk = f.size();
     if (sk){
         unordered_set <int> yourchoice;
-        cout << "input size:";
-        int ssze = get_correct(2100, 1);
+        cout << "input kolichestvo:";
+        int ssze = get_correct(sk, 1);
         cout << "choice id for edit\n";
         while (ssze){
             ssze--;
-            int sid = get_correct(sk, 1);
+            int sid = get_correct(2100, 1);
             if (f.count(sid)){
                 yourchoice.insert(sid);
             }
@@ -223,7 +223,7 @@ void choiceEdit(unordered_map<int, KC>& kcmap, const unordered_set <int>& f){
             if (yourchoice.count(id)){
                 cout << "wceh: ";
                 wceh = get_correct(kc.get_kcehov(), 0);
-                kc.editkc(wceh);
+             //   kc.editkc(wceh);
                 kc.set_wcehov(wceh);
             }
         }
@@ -246,7 +246,7 @@ void choiceDel(unordered_map<int, KC>& kcmap, const unordered_set <int>& f){
     int sk = f.size();
     if (sk) {
         unordered_set <int> yourchoice;
-        cout << "input size:";
+        cout << "input kolichestvo:";
         int ssze = get_correct(sk, 1);
         cout << "choice id for edit\n";
         while (ssze){

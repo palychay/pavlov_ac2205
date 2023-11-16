@@ -21,10 +21,10 @@ public:
     string getname() const;
     bool geteffectivnost() const;
     int get_kcehov() const;
-    void set_wcehov(int &w);
+    void set_wcehov(int w);
     /*основные действия над станциями*/
     void add_new_kc();
-    void editkc(int &ceh);
+    double getLoad() const;
 
     friend class PipeAndKC;
 
