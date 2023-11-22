@@ -23,6 +23,7 @@ public:
     void new_pipe();
     void editpipe();
     
+    static int diametr_pipe();
 
     friend class PipeAndKC;
     friend std::ostream& operator << (std::ostream& out, const Pipe &p);

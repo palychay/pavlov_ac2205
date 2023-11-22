@@ -73,7 +73,8 @@ void text_menu(){
     cout << " 5. edit kc\n";
     cout << " 6. save\n";
     cout << " 7. to load\n";
-    cout << " 8. exit\n";
+    cout << " 8. create a network\n";
+    cout << " 9. exit\n";
     cout << endl;
 }
 
@@ -269,11 +270,12 @@ void delKC_byname(unordered_map <int, KC> &kcmap){
 int Menu(){
     unordered_map <int, KC> kcmap;
     unordered_map <int, Pipe> pmap;
+    unordered_map <int, PipeAndKC::svyaz> rebra;
     while (true){
         text_menu();
         int choice;
         cout << "Please choose a number from 1 to 8: ";
-        choice = get_correct(8, 1);
+        choice = get_correct(9, 1);
         cout << endl;
         switch (choice)
         {
@@ -362,6 +364,10 @@ int Menu(){
             break;
 
         case 8:
+            pkc.create_rebro(kcmap, pmap, rebra);
+            break;
+
+        case 9:
             return 0;
 
         default:

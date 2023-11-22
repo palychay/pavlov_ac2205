@@ -24,6 +24,20 @@ ifstream& operator >> (ifstream &fin, Pipe &p){
     return fin;
 }
 
+int Pipe::diametr_pipe(){
+    cout << "maybe 500, 700, 1000, 1400:";
+    int d;
+    while ((std::cin >> d).fail() || std::cin.peek() != '\n' || d != 500 || d != 700 || d != 1000 || d != 1400)
+	{
+		std::cin.clear();
+		std::cin.ignore(10000, '\n');
+		std::cout << "Incorrect input. Please enter again:  ";
+	}
+	std::cerr << d << std::endl;
+    return d;
+}
+
+
 void Pipe::new_pipe()
 {
     id = ++MaxID;
@@ -33,7 +47,7 @@ void Pipe::new_pipe()
     cout << "Length(km): ";
     length = get_correct(1500., 0.);
     cout << "Pipe Diameter(mm): ";
-    diametr = get_correct(1500, 0);
+    diametr = diametr_pipe();
     cout << "Sign in repair(0 - no or 1 - yes): ";
     remont = get_correct(true, false);
     cout << endl;

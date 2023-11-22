@@ -60,3 +60,44 @@ void PipeAndKC::save_data(const unordered_map<int, Pipe> &pmap, const unordered_
                 fout << kc;
     fout.close();
 }
+
+void PipeAndKC::create_rebro(const unordered_map <int, KC>& kcmap, unordered_map <int, Pipe>& pmap, unordered_map <int, svyaz>& rebra){
+    svyaz r;
+    cout << "input id kc vhoda:";
+    int idkcvh = get_correct(1000, 1);
+    for (auto& [id, kc] : kcmap){
+            if (id == idkcvh){
+                r.vhod = kc;
+            }
+            else{
+                cout << "no id\n";
+                return;
+            }
+        }
+    cout << "input id kc vihoda:";
+    int idkcvih = get_correct(1000, 1);
+    for (auto& [id, kc] : kcmap){
+            if (id == idkcvih){
+                r.vihod = kc;
+            }
+            else{
+                cout << "no id\n";
+                return;
+            }
+        }
+    cout << "diametr of pipe(500, 700, 1000, 1400):";
+    int di = Pipe::diametr_pipe();
+    for (auto& [id, p] : pmap){
+            if (p.diametr == di and !(rebra.count(di))){
+                r.line = p;
+                rebra.insert(pair<int, svyaz>(id, r));
+            }
+            else{
+                Pipe p;
+                p.new_pipe();
+                pmap[p.getID()] = p;
+                r.line = p;
+                rebra.insert(pair<int, svyaz>(p.getID(), r));
+            }
+        }
+}
