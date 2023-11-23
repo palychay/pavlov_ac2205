@@ -65,39 +65,40 @@ void PipeAndKC::create_rebro(const unordered_map <int, KC>& kcmap, unordered_map
     svyaz r;
     cout << "input id kc vhoda:";
     int idkcvh = get_correct(1000, 1);
+    int m = 0;
     for (auto& [id, kc] : kcmap){
             if (id == idkcvh){
-                r.vhod = kc;
-            }
-            else{
-                cout << "no id\n";
-                return;
-            }
+                r.vhod = idkcvh;
+                m++;
+            }  
         }
+    if (m == 0)
+        return;
     cout << "input id kc vihoda:";
     int idkcvih = get_correct(1000, 1);
+    m = 0;
     for (auto& [id, kc] : kcmap){
             if (id == idkcvih){
-                r.vihod = kc;
-            }
-            else{
-                cout << "no id\n";
-                return;
+                r.vihod = idkcvih;
+                m++;
             }
         }
+    if (m == 0)
+        return;
     cout << "diametr of pipe(500, 700, 1000, 1400):";
     int di = Pipe::diametr_pipe();
+    m = 0;
     for (auto& [id, p] : pmap){
             if (p.diametr == di and !(rebra.count(di))){
-                r.line = p;
-                rebra.insert(pair<int, svyaz>(id, r));
+                rebra[p.getID()] = r;
+                m++;
             }
-            else{
-                Pipe p;
-                p.new_pipe();
-                pmap[p.getID()] = p;
-                r.line = p;
-                rebra.insert(pair<int, svyaz>(p.getID(), r));
-            }
-        }
+    }
+    if (m == 0) {
+        Pipe p;
+        p.new_pipe();
+        pmap[p.getID()] = p;
+        rebra.insert(pair<int, svyaz>(p.getID(), r));
+        }  
 }
+

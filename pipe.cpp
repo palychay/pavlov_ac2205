@@ -27,11 +27,11 @@ ifstream& operator >> (ifstream &fin, Pipe &p){
 int Pipe::diametr_pipe(){
     cout << "maybe 500, 700, 1000, 1400:";
     int d;
-    while ((std::cin >> d).fail() || std::cin.peek() != '\n' || d != 500 || d != 700 || d != 1000 || d != 1400)
+    while ((std::cin >> d).fail() || std::cin.peek() != '\n' || (d != 500) && (d != 700) && (d != 1000) && (d != 1400))
 	{
 		std::cin.clear();
-		std::cin.ignore(10000, '\n');
-		std::cout << "Incorrect input. Please enter again:  ";
+		std::cin.ignore(100000, '\n');
+		std::cout << "Incorrect input. Please enter again: ";
 	}
 	std::cerr << d << std::endl;
     return d;

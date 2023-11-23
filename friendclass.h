@@ -10,9 +10,8 @@ class PipeAndKC
     public:
     struct svyaz
     {
-        KC vhod;
-        KC vihod;
-        Pipe line;
+        int vhod;
+        int vihod;
     };
 
     void create_rebro(const unordered_map <int, KC>& kcmap, unordered_map <int, Pipe>& pmap, unordered_map <int, svyaz>& rebra);

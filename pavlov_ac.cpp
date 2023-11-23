@@ -274,7 +274,7 @@ int Menu(){
     while (true){
         text_menu();
         int choice;
-        cout << "Please choose a number from 1 to 8: ";
+        cout << "Please choose a number from 1 to 9: ";
         choice = get_correct(9, 1);
         cout << endl;
         switch (choice)
@@ -364,8 +364,10 @@ int Menu(){
             break;
 
         case 8:
+            {
             pkc.create_rebro(kcmap, pmap, rebra);
-            break;
+            cout << rebra.size() << endl;
+            break;}
 
         case 9:
             return 0;
