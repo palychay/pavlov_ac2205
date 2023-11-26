@@ -25,7 +25,7 @@ ifstream& operator >> (ifstream &fin, Pipe &p){
 }
 
 int Pipe::diametr_pipe(){
-    cout << "maybe 500, 700, 1000, 1400:";
+    cout << "diametr maybe 500, 700, 1000, 1400:";
     int d;
     while ((std::cin >> d).fail() || std::cin.peek() != '\n' || (d != 500) && (d != 700) && (d != 1000) && (d != 1400))
 	{

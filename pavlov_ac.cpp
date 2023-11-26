@@ -73,8 +73,10 @@ void text_menu(){
     cout << " 5. edit kc\n";
     cout << " 6. save\n";
     cout << " 7. to load\n";
-    cout << " 8. create a network\n";
-    cout << " 9. exit\n";
+    cout << " 8. create a rebra\n";
+    cout << " 9. see rebra\n";
+    cout << "10. make topological sort\n";
+    cout << "11. exit\n";
     cout << endl;
 }
 
@@ -274,8 +276,8 @@ int Menu(){
     while (true){
         text_menu();
         int choice;
-        cout << "Please choose a number from 1 to 9: ";
-        choice = get_correct(9, 1);
+        cout << "Please choose a number from 1 to 11: ";
+        choice = get_correct(11, 1);
         cout << endl;
         switch (choice)
         {
@@ -364,12 +366,20 @@ int Menu(){
             break;
 
         case 8:
-            {
             pkc.create_rebro(kcmap, pmap, rebra);
-            cout << rebra.size() << endl;
-            break;}
+            break;
 
         case 9:
+            pkc.see_rebra(rebra);
+            break;
+
+        case 10:
+            pkc.topological_sort(rebra);
+        //topolog sort
+
+            break;
+
+        case 11:
             return 0;
 
         default:

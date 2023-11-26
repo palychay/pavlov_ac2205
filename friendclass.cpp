@@ -1,6 +1,18 @@
 #include "friendclass.h"
 #include "correct_input.h"
 
+
+ostream& operator << (ostream &out, const PipeAndKC::svyaz &r){
+    out << "id vh: " << r.vhod << " " << "id vihod: " << r.vihod << " ";
+    return out;
+}
+
+void PipeAndKC::see_rebra(const unordered_map <int, svyaz>& rebra){
+    for (auto& [id, r] : rebra){
+        cout << r << "id pipe: " << id << endl;
+    }
+}
+
 bool PipeAndKC::is_empty_file(const string &s){
     ifstream file(s);
     return (!file || file.peek() == ifstream::traits_type::eof());
@@ -65,40 +77,103 @@ void PipeAndKC::create_rebro(const unordered_map <int, KC>& kcmap, unordered_map
     svyaz r;
     cout << "input id kc vhoda:";
     int idkcvh = get_correct(1000, 1);
-    int m = 0;
-    for (auto& [id, kc] : kcmap){
-            if (id == idkcvh){
-                r.vhod = idkcvh;
-                m++;
-            }  
-        }
-    if (m == 0)
+    auto it = kcmap.find(idkcvh);
+    if (it != kcmap.end()) {
+        r.vhod = idkcvh;
+    }
+    else
         return;
     cout << "input id kc vihoda:";
     int idkcvih = get_correct(1000, 1);
-    m = 0;
-    for (auto& [id, kc] : kcmap){
-            if (id == idkcvih){
-                r.vihod = idkcvih;
-                m++;
-            }
-        }
-    if (m == 0)
-        return;
-    cout << "diametr of pipe(500, 700, 1000, 1400):";
-    int di = Pipe::diametr_pipe();
-    m = 0;
-    for (auto& [id, p] : pmap){
-            if (p.diametr == di and !(rebra.count(di))){
-                rebra[p.getID()] = r;
-                m++;
-            }
+    it = kcmap.find(idkcvih);
+    if (it != kcmap.end() && r.vhod != idkcvih) {
+        r.vihod = idkcvih;
     }
-    if (m == 0) {
-        Pipe p;
-        p.new_pipe();
-        pmap[p.getID()] = p;
-        rebra.insert(pair<int, svyaz>(p.getID(), r));
-        }  
+    else
+        return;
+    
+    int diametrp = Pipe::diametr_pipe();
+    for (auto& [id, p]: pmap){
+        if (p.diametr == diametrp && rebra.count(id) == 0 && p.remont == 0){
+            rebra[id] = r;
+            return;
+        }
+    }
+    Pipe p;
+    p.new_pipe();
+    p.diametr = diametrp;
+    p.remont = 0;
+    pmap[p.getID()] = p;
+    rebra[p.getID()] = r;
 }
 
+int PipeAndKC::getKeyByValue(const std::unordered_map<int, int>& map, const int& value) {
+    for (const auto& pair : map) {
+        if (pair.second == value) {
+            return pair.first; // Нашли значение, возвращаем ключ
+        }
+    }
+    return int{};
+}
+
+unordered_set<int> PipeAndKC::number_vershin(const unordered_map<int, svyaz>& rebra){
+    unordered_set<int> v;
+    for (auto& [id, r] : rebra){
+        v.insert(r.vhod);
+        v.insert(r.vihod);
+    }
+    return v;
+}
+
+unordered_map<int, int> PipeAndKC::vershin_map(const unordered_map<int, svyaz>& rebra){
+    unordered_map<int, int> vershin;
+    unordered_set<int> v = number_vershin(rebra);
+    int k = 1;
+    for (int elem: v){
+        vershin[k] = elem;
+        k++;
+    }
+    return vershin;
+}
+
+vector<vector<int>> PipeAndKC::graph(const unordered_map<int, svyaz>& rebra){
+    unordered_set<int> v = number_vershin(rebra);
+    unordered_map<int, int> vershin = vershin_map(rebra);
+
+    vector<vector<int>> graph(v.size(), vector<int>(v.size(), 0));
+    for (auto& [id, r] : rebra){
+        graph[getKeyByValue(vershin, r.vhod) - 1][getKeyByValue(vershin, r.vihod) - 1] = 1;
+    }
+    return graph;
+}
+
+bool PipeAndKC::cycle(vector<vector<int>> &graph, int v, vector<int> &visited){
+    visited[v] = 1;
+
+    for (int to : graph[v]){
+        if (visited[to] == 0 && cycle(graph, to, visited) || visited[to] == 1){
+            return true;
+        }
+    }
+    visited[v] = 2;
+    return false;
+}
+
+void PipeAndKC::topological_sort(const unordered_map<int, svyaz>& rebra){
+    vector<vector<int>> g = graph(rebra);
+    unordered_set<int> v = number_vershin(rebra);
+    unordered_map<int, int> vershin = vershin_map(rebra);
+    vector<int> visited(v.size());
+    bool k = false;
+    for (int vv = 0; vv < v.size(); vv++){
+        if(!visited[vv]){
+            k = cycle(g, vv, visited);
+        }
+    }
+    if(k){
+        cout << "graph has not cycle\n";
+    }
+    else{
+        cout << "graph has cycle\n";
+    }
+}
