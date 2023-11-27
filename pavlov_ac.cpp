@@ -75,8 +75,9 @@ void text_menu(){
     cout << " 7. to load\n";
     cout << " 8. create a rebra\n";
     cout << " 9. see rebra\n";
-    cout << "10. make topological sort\n";
-    cout << "11. exit\n";
+    cout << "10. delete rebra\n";
+    cout << "11. make topological sort\n";
+    cout << "12. exit\n";
     cout << endl;
 }
 
@@ -145,7 +146,7 @@ void editPipeINcase4(unordered_map <int, Pipe> &pmap){
         }
 }
 
-void choiceDel(unordered_map<int, Pipe>& pmap, const unordered_set <int>& f){
+void choiceDel(unordered_map<int, Pipe>& pmap, const unordered_set <int>& f, unordered_map<int, PipeAndKC::svyaz> &rebra){
     int sk = f.size();
     if (sk) {
         unordered_set <int> yourchoice;
@@ -159,35 +160,43 @@ void choiceDel(unordered_map<int, Pipe>& pmap, const unordered_set <int>& f){
         }
         for (int x: yourchoice){
             pmap.erase(x);
+            rebra.erase(x);
         }
     }
     else
         return;
 }
 
-void delallPipe(unordered_map <int, Pipe> &pmap){
+void delallPipe(unordered_map <int, Pipe> &pmap, unordered_map<int, PipeAndKC::svyaz> &rebra){
+    cout << "realno want delete?(y/n):";
+    string s;
+    INPUT_LINE(cin, s);
+    if (s == "n"){
+        return;
+    }
+    rebra.clear();
     pmap.clear();
 }
 
-void delPipe_byname(unordered_map <int, Pipe> &pmap){
+void delPipe_byname(unordered_map <int, Pipe> &pmap, unordered_map<int, PipeAndKC::svyaz> &rebra){
     cout << "name: ";
     string s;
     INPUT_LINE(cin, s);
     for (int t: FindPipesByFilter(pmap, CheckByName, s)){
         cout << "id: " << t << endl;
     }
-    choiceDel(pmap, FindPipesByFilter(pmap, CheckByName, s));
+    choiceDel(pmap, FindPipesByFilter(pmap, CheckByName, s), rebra);
 }
 
-void delPipeINcase4(unordered_map <int, Pipe> &pmap){
+void delPipeINcase4(unordered_map <int, Pipe> &pmap, unordered_map<int, PipeAndKC::svyaz> &rebra){
     cout << "Delete all pipes-0 or by filter name-1: ";
     int l;
     l = get_correct(1, 0);
     if (l == 1){
-        delPipe_byname(pmap);
+        delPipe_byname(pmap, rebra);
     }
     else{
-        delallPipe(pmap);
+        delallPipe(pmap, rebra);
     }
 }
 
@@ -239,7 +248,15 @@ void editKC_byname(unordered_map <int, KC> &kcmap){
     choiceEdit(kcmap, FindKCsByFilter(kcmap, CheckByName, s));
 }
 
-void choiceDel(unordered_map<int, KC>& kcmap, const unordered_set <int>& f){
+void delsvyazkc(unordered_map<int, PipeAndKC::svyaz> &rebra, int &x){
+    for (auto& [id, r]: rebra){
+        if (r.vhod == x || r.vihod == x){
+            rebra.erase(id);
+        }
+    }
+}
+
+void choiceDel(unordered_map<int, KC>& kcmap, const unordered_set <int>& f, unordered_map<int, PipeAndKC::svyaz> &rebra){
     int sk = f.size();
     if (sk) {
         unordered_set <int> yourchoice;
@@ -253,20 +270,21 @@ void choiceDel(unordered_map<int, KC>& kcmap, const unordered_set <int>& f){
         }
         for (int x: yourchoice){
             kcmap.erase(x);
+            delsvyazkc(rebra, x);
         }
     }
     else
         return;
 }
 
-void delKC_byname(unordered_map <int, KC> &kcmap){
+void delKC_byname(unordered_map <int, KC> &kcmap,  unordered_map<int, PipeAndKC::svyaz> &rebra){
     cout << "name: ";
     string s;
     INPUT_LINE(cin, s);
     for (int t: FindKCsByFilter(kcmap, CheckByName, s)){
         cout << "id: " << t << endl;
     }
-    choiceDel(kcmap, FindKCsByFilter(kcmap, CheckByName, s));    
+    choiceDel(kcmap, FindKCsByFilter(kcmap, CheckByName, s), rebra);    
 }
 
 int Menu(){
@@ -276,8 +294,8 @@ int Menu(){
     while (true){
         text_menu();
         int choice;
-        cout << "Please choose a number from 1 to 11: ";
-        choice = get_correct(11, 1);
+        cout << "Please choose a number from 1 to 12: ";
+        choice = get_correct(12, 1);
         cout << endl;
         switch (choice)
         {
@@ -331,7 +349,7 @@ int Menu(){
                     editPipeINcase4(pmap);
                 }
                 else{
-                    delPipeINcase4(pmap);
+                    delPipeINcase4(pmap, rebra);
                 }
             }
             else{
@@ -348,7 +366,7 @@ int Menu(){
                     editKC_byname(kcmap);
                     }
                 else{
-                    delKC_byname(kcmap);
+                    delKC_byname(kcmap, rebra);
                 }
             }
             else{
@@ -358,11 +376,11 @@ int Menu(){
 
         case 6:
             PipeAndKC pkc;
-            pkc.save_data(pmap, kcmap);
+            pkc.save_data(pmap, kcmap, rebra);
             break;
 
         case 7:
-            pkc.load_data(pmap, kcmap);
+            pkc.load_data(pmap, kcmap, rebra);
             break;
 
         case 8:
@@ -374,12 +392,12 @@ int Menu(){
             break;
 
         case 10:
-            pkc.topological_sort(rebra);
-        //topolog sort
-
+            pkc.delete_rebra(rebra);
             break;
 
         case 11:
+            
+        case 12:
             return 0;
 
         default:
