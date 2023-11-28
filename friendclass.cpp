@@ -153,3 +153,109 @@ void PipeAndKC::delete_rebra(unordered_map <int, svyaz>& rebra){
     }
     cout << "no such id\n";
 }
+
+
+unordered_set<int> PipeAndKC::number_vershin(const unordered_map<int, svyaz>& rebra){
+    unordered_set<int> v;
+    for (auto& [id, r] : rebra){
+        v.insert(r.vhod);
+        v.insert(r.vihod);
+    }
+    return v;
+}
+unordered_map<int, int> PipeAndKC::vershin_map(const unordered_map<int, svyaz>& rebra){
+    unordered_map<int, int> vershin;
+    unordered_set<int> v = number_vershin(rebra);
+    int k = 1;
+    for (int elem: v){
+        vershin[k] = elem;
+        k++;
+    }
+    return vershin;
+}
+
+int PipeAndKC::getKeyByValue(const unordered_map<int, int>& map, const int& value) {
+    for (const auto& pair : map) {
+        if (pair.second == value) {
+            return pair.first; // Нашли значение, возвращаем ключ
+        }
+    }
+    return int{};
+}
+
+vector<vector<int>> PipeAndKC::create_graph(const unordered_map <int, svyaz>& rebra){
+    unordered_set<int> v = number_vershin(rebra);
+    unordered_map<int, int> vershin = vershin_map(rebra);
+    vector<vector<int>> graph(v.size());
+
+    for (auto& [id, r] : rebra){
+        graph[getKeyByValue(vershin, r.vhod) - 1].push_back(r.vihod);
+    }
+    return graph;
+}
+
+bool PipeAndKC::iscycle(vector<vector<int>>& graph, int w, vector<int>& visited, unordered_map<int, int>& vershin){
+    visited[w] = 1;
+
+    for(int to: graph[w]){
+        if(visited[getKeyByValue(vershin, to)-1] == 0 && iscycle(graph, getKeyByValue(vershin, to)-1, visited, vershin)){
+            return true;
+        }
+        else if(visited[getKeyByValue(vershin, to)-1] == 1){
+            return true;
+        }
+    }
+    visited[w] = 2;
+    return false;
+}
+
+int PipeAndKC::getvalue(unordered_map<int, int>& vershin, int &k){
+    for (auto& [id, idkc] : vershin){
+        if(id == k){
+            return idkc;
+        }
+    }
+    return int{};
+}
+
+void PipeAndKC::topol_sort(vector<vector<int>>& graph, int w, vector<int>& visited, vector<int> &order, unordered_map<int, int>& vershin){
+    visited[w-1] = 1;
+
+    for(int to: graph[w]){
+        if(!visited[getKeyByValue(vershin, to) - 1]){
+            topol_sort(graph, getKeyByValue(vershin, to)-1, visited, order, vershin);
+        }
+    }
+    order.push_back(w);
+}
+
+void PipeAndKC::istopol(const unordered_map <int, svyaz>& rebra){
+    unordered_set<int> v = number_vershin(rebra);
+    unordered_map<int, int> vershin = vershin_map(rebra);
+    vector<vector<int>> graph = create_graph(rebra);
+    vector<int> visited(v.size());
+    bool k = false;
+    for(int w = 0; w < v.size(); w++){
+        if(!visited[w]){
+            k = iscycle(graph, w, visited, vershin);
+        }
+    }
+    if (k){
+        cout << "cycle\n";
+        return;
+    }
+    else{
+        cout << "oki-doki\n";
+        vector<int> order;
+        vector<int> visitee(v.size());
+        for (int w = 1; w <= v.size(); w++){
+            if(!visitee[getKeyByValue(vershin, w)-1]){
+                topol_sort(graph, getKeyByValue(vershin, w), visitee, order, vershin);
+            }
+        }
+        for (int w: order){
+            cout << w << " ";
+        }
+        cout << endl;
+    }
+}

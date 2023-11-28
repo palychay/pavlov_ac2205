@@ -396,7 +396,8 @@ int Menu(){
             break;
 
         case 11:
-            
+            pkc.istopol(rebra);
+            break;
         case 12:
             return 0;
 
