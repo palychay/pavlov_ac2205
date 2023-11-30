@@ -8,8 +8,9 @@ ostream& operator << (ostream &out, const PipeAndKC::svyaz &r){
 }
 
 ofstream& operator << (ofstream &fout, const unordered_map<int, PipeAndKC::svyaz> &rebra){
-    fout << "here_rebra\n";
+    
     for (auto& [id, r] : rebra){
+        fout << "here_rebra\n";
         fout << id << endl << r.vhod << endl << r.vihod << endl;
     }
     return fout;

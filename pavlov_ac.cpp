@@ -167,11 +167,17 @@ void choiceDel(unordered_map<int, Pipe>& pmap, const unordered_set <int>& f, uno
         return;
 }
 
-void delallPipe(unordered_map <int, Pipe> &pmap, unordered_map<int, PipeAndKC::svyaz> &rebra){
+bool wantdelete(){
     cout << "realno want delete?(y/n):";
     string s;
     INPUT_LINE(cin, s);
-    if (s == "n"){
+    if (s == "n")
+        return true;
+    return false;
+}
+
+void delallPipe(unordered_map <int, Pipe> &pmap, unordered_map<int, PipeAndKC::svyaz> &rebra){
+    if (wantdelete()){
         return;
     }
     rebra.clear();
@@ -179,6 +185,9 @@ void delallPipe(unordered_map <int, Pipe> &pmap, unordered_map<int, PipeAndKC::s
 }
 
 void delPipe_byname(unordered_map <int, Pipe> &pmap, unordered_map<int, PipeAndKC::svyaz> &rebra){
+    if (wantdelete()){
+        return;
+    }
     cout << "name: ";
     string s;
     INPUT_LINE(cin, s);
@@ -278,6 +287,8 @@ void choiceDel(unordered_map<int, KC>& kcmap, const unordered_set <int>& f, unor
 }
 
 void delKC_byname(unordered_map <int, KC> &kcmap,  unordered_map<int, PipeAndKC::svyaz> &rebra){
+    if (wantdelete())
+        return;
     cout << "name: ";
     string s;
     INPUT_LINE(cin, s);
