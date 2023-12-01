@@ -36,3 +36,10 @@ T get_correct(T max, T min){
 	std::cerr << x << std::endl;
     return x;
 }
+
+template <typename T>
+ T minimum(T a, T b){
+	if (a > b)
+		return b;
+	return a;
+ }

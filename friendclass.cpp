@@ -119,7 +119,7 @@ void PipeAndKC::create_rebro(const unordered_map <int, KC>& kcmap, unordered_map
     }
     else
         return;
-    
+
     int diametrp = Pipe::diametr_pipe();
     for (auto& [id, p]: pmap){
         if (p.diametr == diametrp && rebra.count(id) == 0 && p.remont == 0){
@@ -262,3 +262,105 @@ void PipeAndKC::istopol(const unordered_map <int, svyaz>& rebra){
         cout << endl;
     }
 }
+
+
+int PipeAndKC::ves_vershin(const int& pid, const unordered_map <int, Pipe>& pmap){
+    for (auto [id, p]: pmap){
+        if (pid == id)
+            return p.length;
+    }
+    return 1e9;
+}
+
+bool PipeAndKC::value_in_vector(const vector<int>& visited, const int& t){
+    for (int tr: visited){
+        if (t == tr){
+            return true;
+        }
+    }
+    return false;
+}
+
+void PipeAndKC::zapolnit_postoyan(vector<vector<int>> &dejk, const int& k, const int& ves, const int& l){
+    for (int i = (l-1); i < dejk.size(); i++){
+        dejk[i][k] = ves;
+    }
+}
+
+int PipeAndKC::id_pipe_for_ves(const unordered_map<int, svyaz> &rebra, int& idpvh, int& idpvih){
+    for(auto& [id, r]: rebra){
+        if(idpvh == r.vhod && idpvih == r.vihod){
+            return id;
+        }
+    }
+    return 1e9;
+}
+
+void PipeAndKC::dejkstra(const unordered_map <int, svyaz>& rebra, const unordered_map <int, Pipe>& pmap){
+    if (rebra.size() == 0){
+        return;
+    }
+    else{
+    unordered_set<int> v = number_vershin(rebra);
+    unordered_map<int, int> vershin = vershin_map(rebra);
+    vector<vector<int>> graph = create_graph(rebra);
+    const int INF = 1e9;
+
+    cout << "vvod start:";
+    int start = get_correct(KC::MaxID, 1);
+    cout << "vvod finish: ";
+    int finish = get_correct(KC::MaxID, 1);
+
+    if (start == finish){
+        cout << start << "->" << finish << " = " << "0\n";
+    }
+    else{
+        vector<int> visited(v.size(), INF); // вектор временных веток
+        vector<vector<int>> dejk;
+
+        dejk.assign(v.size() + 1, vector<int>(v.size(), INF)); // заполнение матрицы бесконечностями
+        int vrp = 0; // вес постояннаянной метки
+        int k = 1; // кол-во шагов выполнения
+        int p = getKeyByValue(vershin, start) - 1; // какая вершина с постоянной меткой
+        visited.push_back(p);
+        dejk[0][getKeyByValue(vershin, start) - 1]= vrp;
+
+        while (k <= v.size())
+        {   
+            int m = INF;
+            int pk;
+            zapolnit_postoyan(dejk, p, vrp, k);
+            for(int i = 0; i < v.size(); i++){
+                if (!(value_in_vector(visited, i))){
+                    if(dejk[k-1][i] > vrp + ves_vershin(id_pipe_for_ves(rebra, vershin[p+1], vershin[i+1]), pmap)){
+                        dejk[k][i] =  vrp + ves_vershin(id_pipe_for_ves(rebra, vershin[p+1], vershin[i+1]), pmap);
+                    }
+                    else{
+                        dejk[k][i] = dejk[k-1][i];
+                    }
+                    if(m >= dejk[k][i] ){
+                        m = dejk[k][i];
+                        pk = i;
+                    }
+                }
+            }
+            vrp = m;
+            p = pk;
+            visited.push_back(p);
+            k++;
+        }
+        cout << start << "->" << finish << " = " << dejk[v.size()][getKeyByValue(vershin, finish)-1] << endl;
+    }
+    }
+}
+
+/*
+void PipeAndKC::put_from_dejk(const vector<vector<int>>& dejk,const int& start, const int& finish, const unordered_map<int, int>& vershin){
+    vector<int> s;
+    s.push_back(finish);
+    for (int i = 0; i < dejk.size()-1; i++){
+        if (value_in_vector(dejk[dejk.size() - 1], dejk[dejk.size() - 1][getKeyByValue(vershin, finish)] - dejk[dejk.size() - 1][i])){
+            s.push_back();
+        }
+    }
+}*/

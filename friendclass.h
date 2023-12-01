@@ -34,6 +34,14 @@ class PipeAndKC
     void save_data(const unordered_map<int, Pipe> &pmap, const unordered_map<int, KC> &kcmap, const unordered_map <int, svyaz>& rebra);
     bool is_empty_file(const string &s);
 
+    void dejkstra(const unordered_map <int, svyaz>& rebra, const unordered_map <int, Pipe>& pmap);
+    int ves_vershin(const int& pid, const unordered_map <int, Pipe>& pmap);
+
+    bool value_in_vector(const vector<int>& visited, const int& t);
+    void zapolnit_postoyan(vector<vector<int>> &dejk, const int& k, const int& ves, const int& l);
+    int id_pipe_for_ves(const unordered_map<int, svyaz> &rebra, int& idpvh, int& idpvih);
+    void put_from_dejk(const vector<vector<int>>& dejk, const int& start, const int& finish, const unordered_map<int, int>& vershin);
+
     friend std::ostream& operator << (std::ostream& out, const svyaz &r);
     friend std::ofstream& operator << (ofstream &fout, const unordered_map<int, svyaz> &rebra);
 

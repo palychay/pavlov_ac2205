@@ -77,7 +77,8 @@ void text_menu(){
     cout << " 9. see rebra\n";
     cout << "10. delete rebra\n";
     cout << "11. make topological sort\n";
-    cout << "12. exit\n";
+    cout << "12. min rasstoyanie between two vershins\n";
+    cout << "13. exit\n";
     cout << endl;
 }
 
@@ -305,8 +306,8 @@ int Menu(){
     while (true){
         text_menu();
         int choice;
-        cout << "Please choose a number from 1 to 12: ";
-        choice = get_correct(12, 1);
+        cout << "Please choose a number from 1 to 13: ";
+        choice = get_correct(13, 1);
         cout << endl;
         switch (choice)
         {
@@ -409,7 +410,12 @@ int Menu(){
         case 11:
             pkc.istopol(rebra);
             break;
+
         case 12:
+            pkc.dejkstra(rebra, pmap);
+            break;
+            
+        case 13:
             return 0;
 
         default:
