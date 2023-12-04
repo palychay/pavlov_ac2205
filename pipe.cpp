@@ -50,11 +50,20 @@ void Pipe::new_pipe()
     diametr = diametr_pipe();
     cout << "Sign in repair(0 - no or 1 - yes): ";
     remont = get_correct(true, false);
+    if (remont){
+        length = 1e9;
+    }
     cout << endl;
 }
 
 void Pipe::editpipe(){
     remont = !remont;
+    if(remont){
+        length = 1e9;
+    }
+    else{
+        length = get_correct(1500., 0.);
+    }
     cout << endl;
 }
 

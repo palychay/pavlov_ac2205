@@ -19,6 +19,7 @@ public:
     int getID() const;
     string getKmname() const;
     bool getRepair() const;
+    
 
     void new_pipe();
     void editpipe();
