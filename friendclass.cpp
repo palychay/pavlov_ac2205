@@ -349,18 +349,30 @@ void PipeAndKC::dejkstra(const unordered_map <int, svyaz>& rebra, const unordere
             visited.push_back(p);
             k++;
         }
+        if (dejk[v.size()][getKeyByValue(vershin, finish)-1] == 1e9){
+            cout << "net putya\n";
+            return;
+        }
         cout << start << "->" << finish << " = " << dejk[v.size()][getKeyByValue(vershin, finish)-1] << endl;
+        vector <int> s;
+        put_from_dejk(dejk, start, finish, vershin, graph, rebra, pmap, s, v);
+        for (int t: s){
+            cout << t << " - ";
+        }
+        cout << endl;
     }
     }
 }
 
-/*
-void PipeAndKC::put_from_dejk(const vector<vector<int>>& dejk,const int& start, const int& finish, const unordered_map<int, int>& vershin){
-    vector<int> s;
+
+void PipeAndKC::put_from_dejk(const vector<vector<int>>& dejk, const int& start, const int& finish, unordered_map<int, int>& vershin, const vector<vector<int>>& graph, const unordered_map <int, svyaz>& rebra, const unordered_map <int, Pipe>& pmap, vector<int>& s,  const unordered_set<int>& v){
+    
     s.push_back(finish);
-    for (int i = 0; i < dejk.size()-1; i++){
-        if (value_in_vector(dejk[dejk.size() - 1], dejk[dejk.size() - 1][getKeyByValue(vershin, finish)] - dejk[dejk.size() - 1][i])){
-            s.push_back();
+    int k = finish;
+    for (int t: v){
+        if (dejk[dejk.size() - 1][getKeyByValue(vershin, t) - 1] + ves_vershin(id_pipe_for_ves(rebra, t, k), pmap) == dejk[dejk.size() - 1][getKeyByValue(vershin, k) - 1] && !value_in_vector(s, start)){
+            put_from_dejk(dejk, start, t, vershin, graph, rebra, pmap, s, v);
         }
     }
-}*/
+    
+}
