@@ -78,7 +78,8 @@ void text_menu(){
     cout << "10. delete rebra\n";
     cout << "11. make topological sort\n";
     cout << "12. min rasstoyanie between two vershins\n";
-    cout << "13. exit\n";
+    cout << "13. max potok\n";
+    cout << "14. exit\n";
     cout << endl;
 }
 
@@ -306,8 +307,8 @@ int Menu(){
     while (true){
         text_menu();
         int choice;
-        cout << "Please choose a number from 1 to 13: ";
-        choice = get_correct(13, 1);
+        cout << "Please choose a number from 1 to 14: ";
+        choice = get_correct(14, 1);
         cout << endl;
         switch (choice)
         {
@@ -416,6 +417,10 @@ int Menu(){
             break;
             
         case 13:
+            pkc.max_potok(rebra, pmap);
+            break;
+
+        case 14:
             return 0;
 
         default:

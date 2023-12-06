@@ -48,7 +48,7 @@ void PipeAndKC::load_data(unordered_map<int, Pipe> &pmap, unordered_map<int, KC>
     Pipe::MaxID = 0;
     KC::MaxID = 0;
     fin >> Pipe::MaxID >> KC::MaxID;
-    
+    rebra.clear();
     string s;
     while (getline(fin, s))
     {
@@ -359,7 +359,7 @@ void PipeAndKC::dejkstra(const unordered_map <int, svyaz>& rebra, const unordere
         for (int t: s){
             cout << t << " - ";
         }
-        cout << endl;
+        cout << "|" << endl;
     }
     }
 }
@@ -374,5 +374,97 @@ void PipeAndKC::put_from_dejk(const vector<vector<int>>& dejk, const int& start,
             put_from_dejk(dejk, start, t, vershin, graph, rebra, pmap, s, v);
         }
     }
-    
+}
+
+
+int PipeAndKC::proizv(const unordered_map <int, Pipe>& pmap, const int& idpipe){
+    int proizvoditenlost = 0;
+    for(auto [id, p]: pmap){
+        if (idpipe == id && p.remont != true){
+            proizvoditenlost = (pow(p.diametr/10, 3) / p.length*100);
+            return proizvoditenlost;
+        }
+    }
+    return proizvoditenlost;
+}
+
+
+
+vector <vector<int>>PipeAndKC::matriza_vesov(const unordered_map <int, svyaz>& rebra, const unordered_map <int, Pipe>& pmap){
+    unordered_set<int> v = number_vershin(rebra);
+    unordered_map<int, int> vershin = vershin_map(rebra);
+    vector<vector<int>> graph = create_graph(rebra);
+
+    vector <vector<int>> matriza_vesov;
+    matriza_vesov.assign(v.size(), vector<int>(v.size(), 0));
+     for (auto [id, r] : rebra){
+        matriza_vesov[getKeyByValue(vershin, r.vhod) - 1][getKeyByValue(vershin, r.vihod) - 1] = proizv(pmap, id);
+    }
+    return matriza_vesov;
+}
+
+
+void PipeAndKC::max_potok(const unordered_map <int, svyaz>& rebra, const unordered_map <int, Pipe>& pmap){
+    if(rebra.size() == 0){
+        return;
+    }
+    unordered_set<int> vr = number_vershin(rebra);
+    unordered_map<int, int> vershin = vershin_map(rebra);
+    vector<vector<int>> graph = create_graph(rebra);
+    cout << "vvod id istoka: ";
+    int istok = get_correct(KC::MaxID, 1);
+    cout << "vvod id stoka: ";
+    int stok = get_correct(KC::MaxID, 1);
+    if (istok == stok){
+        cout << "max flow from " << istok << " to " << stok << "= 0\n";
+        return;
+    }
+
+    int source = getKeyByValue(vershin, istok) - 1;
+	int sink = getKeyByValue(vershin, stok) - 1;
+    int num_V = vr.size();
+	// Создаем резервную матрицу для хранения остаточных пропускных способностей
+	vector<vector<int>> r_matrix = matriza_vesov(rebra, pmap);
+
+	vector<int> parent(num_V, -1); // 
+	int max_flow = 0;
+
+	while (true) {
+		// Заполняется с помощью обхода в ширину и хранит пути
+		parent.assign(num_V, -1);
+		queue<pair<int, int>> q;
+		q.push({ source, 1e9 });
+		parent[source] = source;
+
+		while (!q.empty()) {
+			int u = q.front().first;
+			int path_flow = q.front().second;
+			q.pop();
+
+			for (int v = 0; v < num_V; v++) {
+				if (parent[v] == -1 && r_matrix[u][v] > 0) {
+					// Найден непосещенный узел с ненулевой пропускной способностью в резервной матрице
+					parent[v] = u;
+					int min_capacity = minimum(path_flow, r_matrix[u][v]);
+					if (v == sink) {
+						// Если достигнут сток, обновляем пропускные способности на пути
+						while (v != source) {
+							u = parent[v];
+							r_matrix[u][v] -= min_capacity;
+							r_matrix[v][u] += min_capacity;
+							v = u;
+						}
+						max_flow += min_capacity;
+						break;
+					}
+					q.push({ v, min_capacity });
+				}
+			}
+		}
+		// Если BFS не может найти путь, завершаем цикл
+		if (parent[sink] == -1)
+			break;
+	}
+	cout << "max flow from " << istok << " to " << stok << "= " << max_flow << endl;
+
 }

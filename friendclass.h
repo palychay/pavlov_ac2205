@@ -6,7 +6,9 @@
 #include <fstream>
 #include "pipe.h"
 #include "kc.h"
-
+#include <cmath>
+#include <queue>
+#include <limits>
 
 class PipeAndKC
 {
@@ -41,6 +43,11 @@ class PipeAndKC
     void zapolnit_postoyan(vector<vector<int>> &dejk, const int& k, const int& ves, const int& l);
     int id_pipe_for_ves(const unordered_map<int, svyaz> &rebra, int& idpvh, int& idpvih);
     void put_from_dejk(const vector<vector<int>>& dejk, const int& start, const int& finish, unordered_map<int, int>& vershin, const vector<vector<int>>& graph, const unordered_map <int, svyaz>& rebra, const unordered_map <int, Pipe>& pmap, vector<int>& s, const unordered_set<int>& v);
+    int proizv(const unordered_map <int, Pipe>& pmap, const int& idpipe);
+    vector <vector<int>> matriza_vesov(const unordered_map <int, svyaz>& rebra, const unordered_map <int, Pipe>& pmap);
+    void max_potok(const unordered_map <int, svyaz>& rebra, const unordered_map <int, Pipe>& pmap);
+    int augment_path(vector<vector<int>>& residual_capacity, vector<int>& parent, int source, int sink);
+    int ford_fulkerson(vector<vector<int>>& graph, vector<vector<int>>& capacity_matrix, int source, int sink);
 
     friend std::ostream& operator << (std::ostream& out, const svyaz &r);
     friend std::ofstream& operator << (ofstream &fout, const unordered_map<int, svyaz> &rebra);
