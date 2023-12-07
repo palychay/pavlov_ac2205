@@ -356,8 +356,9 @@ void PipeAndKC::dejkstra(const unordered_map <int, svyaz>& rebra, const unordere
         cout << start << "->" << finish << " = " << dejk[v.size()][getKeyByValue(vershin, finish)-1] << endl;
         vector <int> s;
         put_from_dejk(dejk, start, finish, vershin, graph, rebra, pmap, s, v);
-        for (int t: s){
-            cout << t << " - ";
+        vector<int> path (s.rbegin(), s.rend());
+        for (int v: path){
+            cout << v << " - ";
         }
         cout << "|" << endl;
     }
